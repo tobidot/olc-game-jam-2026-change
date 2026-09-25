@@ -1,0 +1,28 @@
+---
+Checks: >
+  -*,
+  bugprone-*,
+  clang-analyzer-*,
+  cppcoreguidelines-*,
+  modernize-*,
+  performance-*,
+  -readability-redundant-access-specifiers,
+  readability-*,
+  -readability-uppercase-literal-suffix,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -modernize-use-trailing-return-type,
+  -readability-magic-numbers,
+  -readability-redundant-access-specifiers
+
+WarningsAsErrors: ''
+HeaderFilterRegex: '(src|includes)/.*\.(h|hpp)$'
+ExcludeHeaderFilterRegex: '.*olcPixelGameEngine.*'
+FormatStyle: file
+CheckOptions:
+  readability-identifier-naming.NamespaceCase: lower_case
+  readability-identifier-naming.ClassCase: CamelCase
+  readability-identifier-naming.StructCase: CamelCase
+  cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor: true
+...
