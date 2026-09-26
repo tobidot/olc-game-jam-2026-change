@@ -13,7 +13,7 @@ option(DISABLE_LIBDECOR "Disable libdecor usage in wayland builds" OFF)
 option(FORCE_WAYLAND_LIBDECOR "Force wayland builds to only use libdecor" OFF)
 
 ######################################################################
-file(GLOB SOURCES CONFIGURE_DEPENDS "src/*.cpp")
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 
 add_executable(Main)
 target_sources(Main

@@ -4,17 +4,22 @@ Checks: >
   bugprone-*,
   clang-analyzer-*,
   cppcoreguidelines-*,
+  -modernize-deprecated-headers,
   modernize-*,
   performance-*,
   -readability-redundant-access-specifiers,
   readability-*,
-  -readability-uppercase-literal-suffix,
+  -readability-uppercase-literal-suffix, 
   -cppcoreguidelines-avoid-magic-numbers,
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
   -cppcoreguidelines-pro-type-reinterpret-cast,
   -modernize-use-trailing-return-type,
   -readability-magic-numbers,
-  -readability-redundant-access-specifiers
+  -readability-redundant-access-specifiers,
+  -modernize-deprecated-headers,
+  -readability-redundant-parentheses,
+  -cppcoreguidelines-pro-type-union-access,
+  -readability-convert-member-functions-to-static,
 
 WarningsAsErrors: ''
 HeaderFilterRegex: '(src|includes)/.*\.(h|hpp)$'

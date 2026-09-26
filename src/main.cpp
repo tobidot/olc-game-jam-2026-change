@@ -1,10 +1,15 @@
 // Define OLC_PGE3_APPLICATION to include the implementation of
 // the Pixel Game Engine as part of this translation unit
 #define OLC_PGE3_APPLICATION
-#include "AssetManager.hpp"
-#include "GameInput.hpp"
-#include "World.hpp"
-#include "olcPixelGameEngine3.h"
+#include "core/AssetManager.hpp"
+#include "core/Geometry.hpp"
+#include "olc/olcPixelGameEngine3.h"
+#include "renderer/Renderer.hpp"
+#include "state/App.hpp"
+#include "systems/Camera.hpp"
+#include "systems/GameInput.hpp"
+#include "systems/GameWorld.hpp"
+#include "systems/PhysicsWorld.hpp"
 
 #include <numbers>
 #include <random>
@@ -12,18 +17,25 @@
 class Main : public olc::PixelGameEngine
 {
 private:
-    std::unique_ptr<AssetManager> asset_manager;
-    std::unique_ptr<GameInput> game_input;
-    std::unique_ptr<World> world;
-    olc::vf2d camera_position;
+    std::unique_ptr<core::AssetManager> asset_manager;
+    std::unique_ptr<state::App> app_state;
+    std::unique_ptr<systems::GameInput> game_input;
+    std::unique_ptr<systems::GameWorld> game_world;
+    std::unique_ptr<systems::PhysicsWorld> physics_world;
+    std::unique_ptr<systems::Camera> camera;
+    std::unique_ptr<renderer::Renderer> renderer;
 
 public:
     Main()
     {
         sAppName = "Main - Testing build";
-        asset_manager = std::make_unique<AssetManager>();
-        game_input = std::make_unique<GameInput>();
-        world = std::make_unique<World>();
+        asset_manager = std::make_unique<core::AssetManager>();
+        app_state = std::make_unique<state::App>();
+        game_input = std::make_unique<systems::GameInput>();
+        game_world = std::make_unique<systems::GameWorld>();
+        physics_world = std::make_unique<systems::PhysicsWorld>();
+        camera = std::make_unique<systems::Camera>();
+        renderer = std::make_unique<renderer::Renderer>();
     }
 
 protected:
@@ -31,30 +43,27 @@ public:
     // Called once at the start, so create things here
     bool OnUserCreate() override
     {
+        std::cout << "Create Main Start\n";
+        app_state->settings.screen_size = core::Vector(static_cast<olc::vf2d>(ScreenSize()));
         asset_manager->Load(*this);
-        world->Seed(0, *asset_manager);
-        camera_position = world->player_ship->m_position;
+        game_world->Load(*asset_manager, *app_state);
+
+        std::cout << "Create Main Finished\n";
         return true;
     }
 
     // Called every frame, so update things here
-    bool OnUserUpdate(float f_elapsed_time) override
+    bool OnUserUpdate(float elapsed_time) override
     {
-        f_elapsed_time = std::min(1.0f, std::max(0.0f, f_elapsed_time));
-        //
-        game_input->PreUpdate(mouse, keyboard, f_elapsed_time);
+        elapsed_time = std::min(1.0f, std::max(0.0f, elapsed_time));
 
-        ApplyCamera();
-        DrawBackground();
+        game_input->PreUpdate(mouse, keyboard, elapsed_time);
+        renderer->Draw(draw, *asset_manager, *app_state);
+        game_world->Update(*game_input, *app_state, elapsed_time);
+        game_input->PostUpdate(elapsed_time);
 
-        // Update and draw the world
-        world->Update(*game_input, f_elapsed_time);
-        world->Draw(draw);
+        draw.Circle(mouse.GetPosition(), 10, olc::Colour::BLUE);
 
-        UpdateCamera(f_elapsed_time);
-
-        game_input->PostUpdate(f_elapsed_time);
-        // Successful frame
         return true;
     }
 
@@ -63,31 +72,14 @@ public:
         const auto window_size = config.vScreenSize;
 
         //
-        olc::tf2d transform;
-        transform.translate(-camera_position + window_size * 0.5f);
-        draw.SetWorldTransform(transform);
-    }
-
-    void DrawBackground()
-    {
-        const auto window_size = config.vScreenSize;
-
-        // Draw normal image at x2 size
-        const auto bg_zoom = 2.0f;
-
-        const auto image_region = olc::ImageRegion(*asset_manager->background_texture);
-        const auto size = image_region.regionsize * (256.0f / (image_region.regionsize.y) * bg_zoom);
-        const auto offset = window_size * 0.5f - size / bg_zoom;
-
-        // Clear screen to a background color
-        olc::Pixel background_color{12, 44, 111};
-        draw.Clear(background_color);
-        draw.ImageRect(image_region, {0.f, 0.f}, {512, 256});
+        // olc::tf2d transform;
+        // // transform.translate(-camera_position + window_size * 0.5f);
+        // draw.SetWorldTransform(transform);
     }
 
     void UpdateCamera(float f_elapsed_time)
     {
-        camera_position = camera_position.lerp(world->player_ship->m_position, 10 * f_elapsed_time);
+        // camera_position = camera_position.lerp(world->player_ship->m_position, 10 * f_elapsed_time);
     }
 };
 
@@ -97,7 +89,9 @@ int main()
     // Construct demo application
     Main main;
     olc::PGEConfig config;
-    config.vScreenSize = {256, 256};
+    // config.vScreenSize = {600, 450};
+    // config.vPixelSize = {2, 2};
+    config.vScreenSize = {300, 200};
     config.vPixelSize = {4, 4};
     // config.bFullScreenable = false;
     config.bResizeable = false;

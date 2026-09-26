@@ -1,23 +1,36 @@
 #pragma once
-#include "./olcPixelGameEngine3.h"
+#include "core/Geometry.hpp"
+#include "olc/olcPixelGameEngine3.h"
+
+#include <memory>
+
+namespace core
+{
+
+struct AnimationFrameDefinition
+{
+    olc::vi2d slice_index = {0, 0};
+    float seconds = 0.33f;
+    std::unordered_map<std::string, core::Vector> anchors;
+};
+
+struct AnimationDefinition
+{
+    std::string name;
+    std::shared_ptr<olc::Image> image;
+    olc::vi2d frame_slices;
+    std::vector<AnimationFrameDefinition> frames;
+};
 
 struct AnimationFrame
 {
     size_t index = 0;
     float seconds = 0.33f;
-    std::unordered_map<std::string, olc::vf2d> anchors;
-    olc::vf2d top_left;
-    olc::vf2d top_right;
-    olc::vf2d bottom_left;
-    olc::vf2d bottom_right;
-};
-
-struct AnimationFrameSliceIndex
-{
-    size_t index = 0;
-    size_t slice_index = 0;
-    float seconds = 0.33f;
-    std::unordered_map<std::string, olc::vf2d> anchors;
+    std::unordered_map<std::string, core::Vector> anchors;
+    core::Vector top_left;
+    core::Vector top_right;
+    core::Vector bottom_left;
+    core::Vector bottom_right;
 };
 
 struct Animation
@@ -32,28 +45,21 @@ class Animator
 {
 
 public:
-    float current_time = 0.f;
-    std::string current_animation_index;
     std::unordered_map<std::string, Animation> animations;
 
 public:
-    virtual ~Animator() = default;
-
-public:
-    static std::unordered_map<std::string, Animation> MakeDefaultAnimations();
-
-public:
-    void Update(float elapsed_time);
-    void SetAnimation(const std::string &name);
-    Animation GetAnimation() const;
-    AnimationFrame GetAnimationFrame() const;
-    olc::ImageRegion GetImage() const;
-    olc::vf2d GetImageAnchor(const std::string &anchor) const;
-    bool HasImageAnchor(const std::string &anchor) const;
-    olc::vf2d GetImagePivot() const;
+    Animation GetAnimation(const std::string &name) const;
+    AnimationFrame GetAnimationFrame(const std::string &name, float seconds) const;
+    olc::ImageRegion GetImage(const std::string &name, float seconds) const;
+    olc::vf2d GetImageAnchor(const std::string &name, float seconds, const std::string &anchor) const;
+    bool HasImageAnchor(const std::string &name, float seconds, const std::string &anchor) const;
+    olc::vf2d GetImagePivot(const std::string &name, float seconds) const;
     std::vector<std::string> GetAnimationNames() const;
 
 public:
-    Animation CreateAnimation(const std::string &name, std::shared_ptr<olc::Image> image,
-                              const std::vector<AnimationFrame> &frames);
+    Animation CreateAnimation(
+        const std::string &name, std::shared_ptr<olc::Image> image, const std::vector<AnimationFrame> &frames
+    );
 };
+
+} // namespace core

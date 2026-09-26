@@ -1,26 +1,31 @@
 #pragma once
-#include "AssetManager.hpp"
-#include "GameInput.hpp"
-#include "Geometry.hpp"
-#include "olcPixelGameEngine3.h"
+#include "core/AssetManager.hpp"
+#include "core/Geometry.hpp"
+#include "olc/olcPixelGameEngine3.h"
+#include "state/App.hpp"
+#include "systems/GameInput.hpp"
 
 #include <memory>
 #include <vector>
 
-class Main;
+namespace systems
+{
 
-class World
+class GameWorld
 {
 
 public:
-    geometry::RectF boundaries;
+    core::RectF boundaries = {
+        .top = 0.f,
+        .left = 0.f,
+        .bottom = 100.f,
+        .right = 100.f,
+    };
 
 public:
-    World();
-    virtual ~World();
-
-public:
-    void Seed(int generator_seed, const AssetManager &asset_manager);
-    void Update(const GameInput &input, float f_elapsed_time);
-    void Draw(olc::Draw &draw);
+    void Load(const core::AssetManager &assets, state::App &state);
+    void Seed(int generator_seed, const core::AssetManager &asset_manager);
+    void Update(const GameInput &input, state::App &state, float elapsed_time);
 };
+
+} // namespace systems

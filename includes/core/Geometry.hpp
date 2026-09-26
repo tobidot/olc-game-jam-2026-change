@@ -1,8 +1,36 @@
 #pragma once
-#include "olcPixelGameEngine3.h"
+#include "olc/olcPixelGameEngine3.h"
 
-namespace geometry
+namespace core
 {
+
+struct Vector : public olc::vf2d
+{
+    using olc::vf2d::vf2d;
+
+    explicit Vector(const olc::vf2d &cpy)
+    {
+        x = cpy.x;
+        y = cpy.y;
+    }
+
+    explicit Vector(const olc::vi2d &cpy)
+    {
+        x = static_cast<float>(cpy.x);
+        y = static_cast<float>(cpy.y);
+    }
+
+    Vector mul(const Vector &other)
+    {
+        return {x * other.x, y * other.y};
+    }
+
+    Vector mul(const olc::vf2d &other)
+    {
+        return {x * other.x, y * other.y};
+    }
+};
+
 template <typename T> struct Rect
 {
     T top;
@@ -40,6 +68,11 @@ template <typename T> struct Rect
     }
 };
 
+struct Polygon
+{
+    std::vector<Vector> points;
+};
+
 using RectF = Rect<float>;
 
-} // namespace geometry
+} // namespace core

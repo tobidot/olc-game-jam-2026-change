@@ -1,18 +1,17 @@
 #pragma once
-#include "olcPixelGameEngine3.h"
+#include "olc/olcPixelGameEngine3.h"
+
+namespace systems
+{
 
 class GameInput
 {
 public:
-    olc::vf2d acceleration = {0, 0};
-    bool boost = false;
     bool requestToggleFullscreen = false;
 
 public:
-    void PreUpdate(
-        const olc::hw::Mouse &mouse,
-        const olc::hw::Keyboard &keyboard,
-        float fElapsedTime
-    );
+    void PreUpdate(const olc::hw::Mouse &mouse, const olc::hw::Keyboard &keyboard, float fElapsedTime);
     void PostUpdate(float fElapsedTime);
 };
+
+} // namespace systems

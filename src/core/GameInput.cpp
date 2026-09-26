@@ -1,9 +1,8 @@
-#include "GameInput.hpp"
+#include "systems/GameInput.hpp"
 
-void GameInput::PreUpdate(
-    const olc::hw::Mouse &mouse,
-    const olc::hw::Keyboard &keyboard,
-    float fElapsedTime)
+using namespace systems;
+
+void GameInput::PreUpdate(const olc::hw::Mouse &mouse, const olc::hw::Keyboard &keyboard, float fElapsedTime)
 {
     const auto screen_center = olc::vf2d{128.0f, 128.0f};
 
@@ -14,17 +13,17 @@ void GameInput::PreUpdate(
 
     if (keyboard.GetKey(olc::Key::SHIFT).bHeld)
     {
-        boost = true;
+        // boost = true;
     }
 
     const auto mouse_position = mouse.GetPosition();
     const auto diff = mouse_position - screen_center;
     const auto force = diff * fElapsedTime / 5.0f * diff.mag2() / 10000.0f;
-    acceleration = force;
+    // acceleration = force;
 }
 
 void GameInput::PostUpdate(float fElapsedTime)
 {
     requestToggleFullscreen = false;
-    boost = false;
+    // boost = false;
 }

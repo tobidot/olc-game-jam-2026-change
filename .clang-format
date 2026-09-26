@@ -53,4 +53,14 @@ SortIncludes: CaseSensitive
 IndentCaseLabels: true
 FixNamespaceComments: true
 SpacesBeforeTrailingComments: 1
+
+# Forces function call arguments to wrap onto separate lines
+BinPackArguments: false
+
+# Forces function parameters in declarations to wrap onto separate lines
+BinPackParameters: false
+
+# Align arguments vertically when wrapping
+AlignAfterOpenBracket: BlockIndent
+AllowAllArgumentsOnNextLine: false
 ...

@@ -5,10 +5,8 @@
 namespace systems
 {
 
-class PhysicsWorld
+class Camera
 {
-
-public:
     void Upadte(state::App &app_state, float elapsed_time);
 };
 

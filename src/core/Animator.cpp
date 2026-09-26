@@ -1,59 +1,19 @@
-#include "Animator.hpp"
+#include "core/Animator.hpp"
 
-#include "Exceptions.hpp"
-#include "olcPixelGameEngine3.h"
+#include "exceptions/Exceptions.hpp"
+#include "olc/olcPixelGameEngine3.h"
 
-std::unordered_map<std::string, Animation> Animator::MakeDefaultAnimations()
+using namespace core;
+
+Animation Animator::GetAnimation(const std::string &name) const
 {
-    const std::string default_animation_name = std::string("none");
-    auto animation_frame = AnimationFrame{
-        .seconds = 1.0f,
-        .top_left = {1.0f, 1.0f},
-        .top_right = {1.0f, 1.0f},
-        .bottom_left = {1.0f, 1.0f},
-        .bottom_right = {1.0f, 1.0f},
-    };
-    auto animation = Animation{
-        .name = default_animation_name,
-        .total_seconds = 1.0f,
-        .frames = std::vector<AnimationFrame>({
-            animation_frame,
-        }),
-    };
-    auto animation_pair = std::make_pair(default_animation_name, animation);
-    return std::unordered_map<std::string, Animation>({animation_pair});
+    return animations.at(name);
 }
 
-void Animator::Update(float elapsed_time)
+AnimationFrame Animator::GetAnimationFrame(const std::string &name, float seconds) const
 {
-    const auto animation = GetAnimation();
-    const auto animation_time = animation.total_seconds;
-    if (animation_time <= 0.0f)
-    {
-        current_time = 0.0f;
-        return;
-    }
-    current_time = static_cast<float>(fmod(current_time + elapsed_time, animation_time));
-}
-
-void Animator::SetAnimation(const std::string &name)
-{
-    if (!animations.contains(name))
-    {
-        throw exceptions::runtime::AnimationIndexNotFoundException(name);
-    }
-    current_animation_index = name;
-}
-
-Animation Animator::GetAnimation() const
-{
-    return animations.at(current_animation_index);
-}
-
-AnimationFrame Animator::GetAnimationFrame() const
-{
-    auto animation = GetAnimation();
-    auto time = current_time;
+    auto animation = GetAnimation(name);
+    auto time = seconds;
     if (animation.frames.empty())
     {
         throw exceptions::runtime::AnimationHasNoFramesException();
@@ -69,10 +29,10 @@ AnimationFrame Animator::GetAnimationFrame() const
     return *animation.frames.begin();
 }
 
-olc::ImageRegion Animator::GetImage() const
+olc::ImageRegion Animator::GetImage(const std::string &name, float seconds) const
 {
-    const auto &animation = GetAnimation();
-    const auto &frame = GetAnimationFrame();
+    const auto &animation = GetAnimation(name);
+    const auto &frame = GetAnimationFrame(name, seconds);
 
     auto image = animation.image;
     if (!image)
@@ -81,7 +41,11 @@ olc::ImageRegion Animator::GetImage() const
     }
 
     return olc::ImageRegion{
-        *image, frame.top_left, frame.top_right, frame.bottom_left, frame.bottom_right,
+        *image,
+        frame.top_left,
+        frame.top_right,
+        frame.bottom_left,
+        frame.bottom_right,
     };
 }
 
@@ -97,31 +61,32 @@ std::vector<std::string> Animator::GetAnimationNames() const
     return keys;
 }
 
-bool Animator::HasImageAnchor(const std::string &anchor) const
+bool Animator::HasImageAnchor(const std::string &name, float seconds, const std::string &anchor) const
 {
-    auto frame = GetAnimationFrame();
+    auto frame = GetAnimationFrame(name, seconds);
     return frame.anchors.contains(anchor);
 }
 
-olc::vf2d Animator::GetImageAnchor(const std::string &anchor) const
+olc::vf2d Animator::GetImageAnchor(const std::string &name, float seconds, const std::string &anchor) const
 {
-    auto frame = GetAnimationFrame();
+    auto frame = GetAnimationFrame(name, seconds);
     return frame.anchors.at(anchor);
 }
 
-olc::vf2d Animator::GetImagePivot() const
+olc::vf2d Animator::GetImagePivot(const std::string &name, float seconds) const
 {
-    auto frame = GetAnimationFrame();
-    if (HasImageAnchor("pivot"))
+    auto frame = GetAnimationFrame(name, seconds);
+    if (HasImageAnchor(name, seconds, "pivot"))
     {
-        return GetImageAnchor("pivot");
+        return GetImageAnchor(name, seconds, "pivot");
     }
-    auto animation = GetAnimation();
+    auto animation = GetAnimation(name);
     return (frame.bottom_right - frame.top_left) * 0.5f * animation.image->Size();
 }
 
-Animation Animator::CreateAnimation(const std::string &name, std::shared_ptr<olc::Image> image,
-                                    const std::vector<AnimationFrame> &frames)
+Animation Animator::CreateAnimation(
+    const std::string &name, std::shared_ptr<olc::Image> image, const std::vector<AnimationFrame> &frames
+)
 {
     Animation animation;
     animation.image = std::move(image);

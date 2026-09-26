@@ -1,65 +1,42 @@
-#include "World.hpp"
+#include "systems/GameWorld.hpp"
 
-#include "AssetManager.hpp"
-#include "GameInput.hpp"
+#include "core/AssetManager.hpp"
+#include "entities/PlayerKnight.hpp"
+#include "systems/GameInput.hpp"
 
-#include <assert.h>
+#include <cassert>
 #include <memory>
 
-World::World()
+using namespace systems;
+
+void GameWorld::Seed(int generator_seed, const core::AssetManager &asset_manager)
 {
 }
 
-World::~World()
+void GameWorld::Update(const GameInput &input, state::App &state, float elapsed_time)
 {
-}
-
-void World::Seed(int generator_seed, const AssetManager &asset_manager)
-{
-    player_ship = std::make_shared<Ship>(asset_manager);
-    player_ship->m_position = {0.f, 0.f};
-    player_ship->m_velocity = {5.f, 5.f};
-    player_ship->m_angle = M_PI_2;
-    ships.push_back(player_ship);
-
-    auto other_ship = std::make_shared<Ship>(asset_manager);
-    other_ship->m_position = {120.f, 0.f};
-    other_ship->m_velocity = {5, 5};
-    other_ship->m_angle = M_PI;
-    ships.push_back(other_ship);
-}
-
-void World::Update(const GameInput &input, float f_elapsed_time)
-{
-    if (player_ship)
+    for (auto &entity : state.game_world.entities)
     {
-        if (input.boost)
-        {
-            player_ship->Push(input.acceleration);
-            player_ship->animator->SetAnimation("boost");
-        }
-        else
-        {
-            player_ship->animator->SetAnimation("idle");
-        }
+        entity->Update(state, elapsed_time);
     }
+    auto current_entity_level_progress = floorf(state.game_world.player_entity->position.x / 50.0f) * 50.0f;
+    auto level_progress_diff = current_entity_level_progress - state.game_world.player.level_progress;
 
-    for (const auto &ship : ships)
+    if (level_progress_diff > state.settings.screen_size.x * 0.5f)
     {
-        if (ship)
-        {
-            ship->Update(f_elapsed_time);
-        }
+        state.game_world.player.level_progress +=
+            floorf(std::max(20.0f, level_progress_diff / 5.0f) / 10.0f) * 10.0f * elapsed_time;
+    }
+    else if (level_progress_diff > state.settings.screen_size.x * 0.15f)
+    {
+        state.game_world.player.level_progress += 20.0f * elapsed_time;
     }
 }
 
-void World::Draw(olc::Draw &draw)
+void GameWorld::Load(const core::AssetManager &assets, state::App &state)
 {
-    for (const auto &ship : ships)
-    {
-        if (ship)
-        {
-            ship->Draw(draw);
-        }
-    }
+    auto player_entity = std::make_shared<entity::PlayerKnight>(assets, state);
+    player_entity->position = {0.f, 125.f};
+    state.game_world.player_entity = player_entity;
+    state.game_world.entities.push_back(player_entity);
 }
