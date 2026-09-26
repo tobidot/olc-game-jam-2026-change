@@ -1,2 +1,5 @@
+assets/**/*.*
+!/assets/**/*.txt
+__MACOSX
 /build
 /build-web

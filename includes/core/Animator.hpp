@@ -12,6 +12,14 @@ struct AnimationFrame
     olc::vf2d bottom_right;
 };
 
+struct AnimationFrameSliceIndex
+{
+    size_t index = 0;
+    size_t slice_index = 0;
+    float seconds = 0.33f;
+    std::unordered_map<std::string, olc::vf2d> anchors;
+};
+
 struct Animation
 {
     std::string name;

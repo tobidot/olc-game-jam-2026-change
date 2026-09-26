@@ -3,7 +3,6 @@
 #define OLC_PGE3_APPLICATION
 #include "AssetManager.hpp"
 #include "GameInput.hpp"
-#include "Ship.hpp"
 #include "World.hpp"
 #include "olcPixelGameEngine3.h"
 

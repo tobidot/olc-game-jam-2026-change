@@ -4,6 +4,13 @@ This project is my entry to the olc GameJam with the theme "Change"
 
 This project is built with [OlcPixelGameEngine V3](https://github.com/OneLoneCoder/olcPixelGameEngine3).
 
+## Idea
+
+The developed idea is a idle-platformer where you need to switch/change yourself between different characters
+to defeat hordes of enemies.
+
+See [GDD](./GDD.md)
+
 ## How to build
 
 Configure and generate Makefile
