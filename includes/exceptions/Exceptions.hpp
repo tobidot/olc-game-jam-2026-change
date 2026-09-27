@@ -64,6 +64,24 @@ public:
 namespace logic
 {
 
+class LogicException : public std::logic_error
+{
+public:
+    std::source_location location;
+
+public:
+    explicit LogicException(const std::string &message, std::source_location location = std::source_location::current())
+        : std::logic_error(message), location(location) {
+
+          };
+
+    [[nodiscard]]
+    const std::source_location &where() const noexcept
+    {
+        return location;
+    }
+};
+
 } // namespace logic
 
 } // namespace exceptions

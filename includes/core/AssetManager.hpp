@@ -17,14 +17,34 @@ public:
     std::shared_ptr<olc::Image> enemy_ghost_idle_texture;
     std::shared_ptr<olc::Image> enemy_ghost_walk_texture;
     std::shared_ptr<olc::Image> enemy_ghost_attack1_texture;
+    std::shared_ptr<olc::Image> enemy_minotaur_idle_texture;
+    std::shared_ptr<olc::Image> enemy_minotaur_walk_texture;
+    std::shared_ptr<olc::Image> enemy_minotaur_attack1_texture;
+    std::shared_ptr<olc::Image> enemy_skeleton_idle_texture;
+    std::shared_ptr<olc::Image> enemy_skeleton_walk_texture;
+    std::shared_ptr<olc::Image> enemy_skeleton_attack1_texture;
+    std::shared_ptr<olc::Image> enemy_satyr_idle_texture;
+    std::shared_ptr<olc::Image> enemy_satyr_walk_texture;
+    std::shared_ptr<olc::Image> enemy_satyr_attack1_texture;
+    std::shared_ptr<olc::Image> enemy_werewolf_idle_texture;
+    std::shared_ptr<olc::Image> enemy_werewolf_walk_texture;
+    std::shared_ptr<olc::Image> enemy_werewolf_attack1_texture;
     // animations
     std::shared_ptr<Animator> hero_knight_animator;
     std::shared_ptr<Animator> enemy_ghost_animator;
+    std::shared_ptr<Animator> enemy_minotaur_animator;
+    std::shared_ptr<Animator> enemy_skeleton_animator;
+    std::shared_ptr<Animator> enemy_satyr_animator;
+    std::shared_ptr<Animator> enemy_werewolf_animator;
 
 public:
     void Load(olc::PixelGameEngine &engine);
     void LoadKnight(olc::PixelGameEngine &engine);
     void LoadGhost(olc::PixelGameEngine &engine);
+    void LoadMinotaur(olc::PixelGameEngine &engine);
+    void LoadSkeleton(olc::PixelGameEngine &engine);
+    void LoadSatyr(olc::PixelGameEngine &engine);
+    void LoadWerewolf(olc::PixelGameEngine &engine);
     [[nodiscard]]
     std::shared_ptr<olc::Image> CreateImage(olc::PixelGameEngine &engine, const char *path) const;
     [[nodiscard]]

@@ -41,7 +41,7 @@ void GameWorldRenderer::DrawEntity(
     if (entity.damage_animation_time < entity.damage_animation_duration)
     {
         auto red = olc::Colour::RED;
-        auto t = cosf(entity.damage_animation_time * M_PI * 4);
+        auto t = cosf(entity.damage_animation_time * M_PIf * 4.0f);
         tint = (red * t + tint * (1 - t));
     }
 

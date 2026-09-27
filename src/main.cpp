@@ -63,7 +63,7 @@ public:
 
             game_input->PreUpdate(mouse, keyboard, elapsed_time);
             renderer->Draw(draw, *asset_manager, *app_state);
-            game_world->Update(*game_input, *app_state, elapsed_time);
+            game_world->Update(*asset_manager, *game_input, *app_state, elapsed_time);
             game_input->PostUpdate(elapsed_time);
 
             draw.Circle(mouse.GetPosition(), 10, olc::Colour::BLUE);
