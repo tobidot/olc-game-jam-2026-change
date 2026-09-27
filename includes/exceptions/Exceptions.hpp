@@ -10,27 +10,51 @@ namespace runtime
 {
 using ss = std::stringstream;
 
-class AnimationIndexNotFoundException : public std::runtime_error
+class RuntimeException : public std::runtime_error
 {
 public:
-    explicit AnimationIndexNotFoundException(const std::string &index)
-        : std::runtime_error((ss() << "Animation name '" << index << "' not found").str())
+    std::source_location location;
+
+public:
+    explicit RuntimeException(
+        const std::string &message, std::source_location location = std::source_location::current()
+    )
+        : std::runtime_error(message), location(location) {
+
+          };
+
+    [[nodiscard]]
+    const std::source_location &where() const noexcept
+    {
+        return location;
+    }
+};
+
+class AnimationIndexNotFoundException : public RuntimeException
+{
+public:
+    explicit AnimationIndexNotFoundException(
+        const std::string &index, std::source_location location = std::source_location::current()
+    )
+        : RuntimeException((ss() << "Animation name '" << index << "' not found").str(), location)
     {
     }
 };
 
-class AnimationIsMissingSourceImageException : public std::runtime_error
+class AnimationIsMissingSourceImageException : public RuntimeException
 {
 public:
-    AnimationIsMissingSourceImageException() : std::runtime_error("Animation is missing a source image")
+    explicit AnimationIsMissingSourceImageException(std::source_location location = std::source_location::current())
+        : RuntimeException("Animation is missing a source image", location)
     {
     }
 };
 
-class AnimationHasNoFramesException : public std::runtime_error
+class AnimationHasNoFramesException : public RuntimeException
 {
 public:
-    AnimationHasNoFramesException() : std::runtime_error("Animation has no frames defined")
+    explicit AnimationHasNoFramesException(std::source_location location = std::source_location::current())
+        : RuntimeException("Animation has no frames defined", location)
     {
     }
 };

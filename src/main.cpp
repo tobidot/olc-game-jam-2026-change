@@ -3,6 +3,7 @@
 #define OLC_PGE3_APPLICATION
 #include "core/AssetManager.hpp"
 #include "core/Geometry.hpp"
+#include "exceptions/Exceptions.hpp"
 #include "olc/olcPixelGameEngine3.h"
 #include "renderer/Renderer.hpp"
 #include "state/App.hpp"
@@ -44,6 +45,7 @@ public:
     bool OnUserCreate() override
     {
         std::cout << "Create Main Start\n";
+
         app_state->settings.screen_size = core::Vector(static_cast<olc::vf2d>(ScreenSize()));
         asset_manager->Load(*this);
         game_world->Load(*asset_manager, *app_state);
@@ -55,31 +57,26 @@ public:
     // Called every frame, so update things here
     bool OnUserUpdate(float elapsed_time) override
     {
-        elapsed_time = std::min(1.0f, std::max(0.0f, elapsed_time));
+        try
+        {
+            elapsed_time = std::min(1.0f, std::max(0.0f, elapsed_time));
 
-        game_input->PreUpdate(mouse, keyboard, elapsed_time);
-        renderer->Draw(draw, *asset_manager, *app_state);
-        game_world->Update(*game_input, *app_state, elapsed_time);
-        game_input->PostUpdate(elapsed_time);
+            game_input->PreUpdate(mouse, keyboard, elapsed_time);
+            renderer->Draw(draw, *asset_manager, *app_state);
+            game_world->Update(*game_input, *app_state, elapsed_time);
+            game_input->PostUpdate(elapsed_time);
 
-        draw.Circle(mouse.GetPosition(), 10, olc::Colour::BLUE);
+            draw.Circle(mouse.GetPosition(), 10, olc::Colour::BLUE);
 
-        return true;
-    }
-
-    void ApplyCamera()
-    {
-        const auto window_size = config.vScreenSize;
-
-        //
-        // olc::tf2d transform;
-        // // transform.translate(-camera_position + window_size * 0.5f);
-        // draw.SetWorldTransform(transform);
-    }
-
-    void UpdateCamera(float f_elapsed_time)
-    {
-        // camera_position = camera_position.lerp(world->player_ship->m_position, 10 * f_elapsed_time);
+            return true;
+        }
+        catch (const exceptions::runtime::RuntimeException &exception)
+        {
+            std::cerr << "Exception: " << exception.what() << '\n';
+            std::cerr << "Thrown from: " << exception.where().function_name() << '\n';
+            std::cerr << "File: " << exception.where().file_name() << ":" << exception.where().line() << '\n';
+            throw exception;
+        }
     }
 };
 

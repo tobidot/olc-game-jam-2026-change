@@ -7,7 +7,12 @@ using namespace core;
 
 Animation Animator::GetAnimation(const std::string &name) const
 {
-    return animations.at(name);
+    const auto iterator = animations.find(name);
+    if (iterator == animations.end())
+    {
+        throw exceptions::runtime::AnimationIndexNotFoundException(name);
+    }
+    return iterator->second;
 }
 
 AnimationFrame Animator::GetAnimationFrame(const std::string &name, float seconds) const

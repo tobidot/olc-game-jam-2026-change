@@ -62,6 +62,18 @@ template <typename T> struct Rect
     }
 
     [[nodiscard]]
+    float Height() const
+    {
+        return bottom - top;
+    }
+
+    [[nodiscard]]
+    float Width() const
+    {
+        return right - left;
+    }
+
+    [[nodiscard]]
     bool Contains(olc::v_2d<T> point) const
     {
         return point.x >= left && point.x < right && point.y >= top && point.y < bottom;

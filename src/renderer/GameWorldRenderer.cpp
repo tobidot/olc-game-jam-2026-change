@@ -16,7 +16,7 @@ void GameWorldRenderer::Draw(olc::Draw &draw, const core::AssetManager &assets, 
     //
     for (const auto &entity : state.game_world.entities)
     {
-        DrawEntity(draw, assets, *entity);
+        DrawEntity(draw, assets, state, *entity);
     }
 
     world_transform.pop();
@@ -24,19 +24,33 @@ void GameWorldRenderer::Draw(olc::Draw &draw, const core::AssetManager &assets, 
 }
 
 void GameWorldRenderer::DrawEntity(
-    olc::Draw &draw, const core::AssetManager &assets, const entity::Entity &entity
+    olc::Draw &draw, const core::AssetManager &assets, const state::App &state, const entity::Entity &entity
 ) const
 {
     // transform view to entity
     olc::tf2d world_transform = draw.GetWorldTransform();
-    world_transform.push(olc::mf3d::translation(entity.position));
+    const auto top_offset = state.game_world.render_offset_top;
+    const auto screen_height = state.settings.screen_size.y - top_offset;
+    const auto position_scale = core::Vector{1.0f, screen_height / state.game_world.boundaries.Height()};
+    const auto position = entity.position * position_scale + core::Vector{0.f, top_offset};
+    world_transform.push(olc::mf3d::translation(position));
     draw.SetWorldTransform(world_transform);
+
+    // build a tint
+    auto tint = olc::Colour::WHITE;
+    if (entity.damage_animation_time < entity.damage_animation_duration)
+    {
+        auto red = olc::Colour::RED;
+        auto t = cosf(entity.damage_animation_time * M_PI * 4);
+        tint = (red * t + tint * (1 - t));
+    }
 
     // draw the image
     const auto &image = entity.GetImage();
+    const auto flipped = entity.is_flipped ? core::Vector{-1.f, 1.f} : core::Vector{1.f, 1.f};
     const auto pivot = entity.animator.GetImagePivot(entity.current_animation, entity.current_animation_time);
-    const auto pivot_pixels = -pivot * image.regionsize * entity.scale;
-    draw.Image(image, pivot_pixels, entity.scale);
+    const auto pivot_pixels = -pivot * image.regionsize * entity.scale * flipped;
+    draw.Image(image, pivot_pixels, entity.scale * flipped, tint);
     draw.Circle({0, 0}, 10.0f);
 
     world_transform.pop();

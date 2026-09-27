@@ -30,4 +30,5 @@ CheckOptions:
   readability-identifier-naming.ClassCase: CamelCase
   readability-identifier-naming.StructCase: CamelCase
   cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor: true
+  readability-identifier-length.IgnoredVariableNames: t
 ...
