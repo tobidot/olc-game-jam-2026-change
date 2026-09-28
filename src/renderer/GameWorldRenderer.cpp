@@ -13,8 +13,14 @@ void GameWorldRenderer::Draw(olc::Draw &draw, const core::AssetManager &assets, 
     world_transform.push(olc::mf3d::translation(core::Vector{-state.game_world.player.level_progress, 0.f}));
     draw.SetWorldTransform(world_transform);
 
-    //
-    for (const auto &entity : state.game_world.entities)
+    auto sorted_entites = std::vector(state.game_world.entities);
+    std::ranges::sort(
+        sorted_entites,
+        [](const std::shared_ptr<entity::Entity> &first, const std::shared_ptr<entity::Entity> &second)
+        { return first->position.y < second->position.y; }
+    );
+
+    for (const auto &entity : sorted_entites)
     {
         DrawEntity(draw, assets, state, *entity);
     }

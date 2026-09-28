@@ -1,5 +1,6 @@
 #include "entities/EnemyBase.hpp"
 
+#include "entities/PlayerBase.hpp"
 #include "plans/BasePlan.hpp"
 #include "plans/DirectAttack.hpp"
 #include "plans/Move.hpp"
@@ -20,7 +21,7 @@ void EnemyBase::Update(state::App &state, float elapsed_time)
     {
         if (plan_cooldown <= 0.f)
         {
-            auto difference = (state.game_world.player_entity->position - position);
+            auto difference = ((*state.game_world.player_entity)->position - position);
             auto distance = difference.mag();
 
             if (distance < 100.0f)

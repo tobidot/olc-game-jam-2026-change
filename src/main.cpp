@@ -1,10 +1,15 @@
 // Define OLC_PGE3_APPLICATION to include the implementation of
 // the Pixel Game Engine as part of this translation unit
 #define OLC_PGE3_APPLICATION
+#include "olc/olcPixelGameEngine3.h"
+
+#define OLC_PGEX3_MINIAUDIO
+#include "olc/olcPGEX3_Miniaudio.h"
+
+//
 #include "core/AssetManager.hpp"
 #include "core/Geometry.hpp"
 #include "exceptions/Exceptions.hpp"
-#include "olc/olcPixelGameEngine3.h"
 #include "renderer/Renderer.hpp"
 #include "state/App.hpp"
 #include "systems/Camera.hpp"
@@ -17,6 +22,10 @@
 
 class Main : public olc::PixelGameEngine
 {
+private:
+    // olc extensions
+    olc::ext::Miniaudio::AudioEngine audio;
+
 private:
     std::unique_ptr<core::AssetManager> asset_manager;
     std::unique_ptr<state::App> app_state;
@@ -37,6 +46,11 @@ public:
         physics_world = std::make_unique<systems::PhysicsWorld>();
         camera = std::make_unique<systems::Camera>();
         renderer = std::make_unique<renderer::Renderer>();
+
+        if (!InstallSystemExtension(&audio))
+        {
+            throw std::runtime_error("Failed to install olcPGEX3_miniaudio");
+        }
     }
 
 protected:
@@ -47,7 +61,7 @@ public:
         std::cout << "Create Main Start\n";
 
         app_state->settings.screen_size = core::Vector(static_cast<olc::vf2d>(ScreenSize()));
-        asset_manager->Load(*this);
+        asset_manager->Load(*this, audio);
         game_world->Load(*asset_manager, *app_state);
 
         std::cout << "Create Main Finished\n";

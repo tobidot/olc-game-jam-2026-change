@@ -1,4 +1,5 @@
 #pragma once
+#include "enums/Enums.hpp"
 #include "plans/BasePlan.hpp"
 
 namespace entity
@@ -7,7 +8,10 @@ namespace entity
 class PlayerBase : public Entity
 {
 public:
-    PlayerBase() = default;
+    enums::CharacterType type;
+
+public:
+    explicit PlayerBase(enums::CharacterType type);
     PlayerBase(const PlayerBase &cpy) = delete;
     PlayerBase(PlayerBase &&cpy) = delete;
     ~PlayerBase() override = default;

@@ -16,6 +16,12 @@ void GameInput::PreUpdate(const olc::hw::Mouse &mouse, const olc::hw::Keyboard &
         // boost = true;
     }
 
+    if (keyboard.GetKey(olc::Key::SPACE).bPressed)
+    {
+        switchCharacter = true;
+        std::cout << "switch cahar" << "\n";
+    }
+
     const auto mouse_position = mouse.GetPosition();
     const auto diff = mouse_position - screen_center;
     const auto force = diff * fElapsedTime / 5.0f * diff.mag2() / 10000.0f;
@@ -25,5 +31,6 @@ void GameInput::PreUpdate(const olc::hw::Mouse &mouse, const olc::hw::Keyboard &
 void GameInput::PostUpdate(float fElapsedTime)
 {
     requestToggleFullscreen = false;
+    switchCharacter = false;
     // boost = false;
 }

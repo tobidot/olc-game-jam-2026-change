@@ -9,7 +9,6 @@ enum class CharacterType : uint8_t
     KNIGHT,
     SAMURAI,
     SHINOBI,
-    VAMPIRE,
     WIZARD,
     MAX,
 };
@@ -21,6 +20,7 @@ enum class EnemyType : uint8_t
     SATYR,
     SKELETON,
     WEREWOLF,
+    VAMPIRE,
     MAX,
 };
 

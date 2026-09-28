@@ -8,7 +8,7 @@ namespace plan
 
 struct DirectAttackConfig
 {
-    std::shared_ptr<entity::Entity> target;
+    std::shared_ptr<std::shared_ptr<entity::Entity>> target;
     std::string animation_name;
     float hit_time;
     float hit_time_window;
@@ -19,7 +19,7 @@ struct DirectAttackConfig
 
 struct DirectAttackFromAnimationFrameConfig
 {
-    std::shared_ptr<entity::Entity> target;
+    std::shared_ptr<std::shared_ptr<entity::Entity>> target;
     std::string animation_name;
     size_t hit_frame;
     float max_range;
@@ -29,7 +29,7 @@ struct DirectAttackFromAnimationFrameConfig
 class DirectAttack : public BasePlan
 {
 public:
-    std::shared_ptr<entity::Entity> target;
+    std::shared_ptr<std::shared_ptr<entity::Entity>> target;
     std::string animation_name;
     float time = 0.f;
     float hit_time = 0.f;

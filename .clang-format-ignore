@@ -1,6 +1,7 @@
 # Ignore third-party single-header engine
 olcPixelGameEngine3.h
 includes/olcPixelGameEngine3.h
+includes/olc/*.*
 build/
 build-web/
 build-win/

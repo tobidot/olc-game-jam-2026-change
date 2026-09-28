@@ -5,9 +5,14 @@
 #include "entities/EnemyMinotaur.hpp"
 #include "entities/EnemySatyr.hpp"
 #include "entities/EnemySkeleton.hpp"
+#include "entities/EnemyVampire.hpp"
 #include "entities/EnemyWerewolf.hpp"
 #include "entities/Entity.hpp"
+#include "entities/PlayerBase.hpp"
 #include "entities/PlayerKnight.hpp"
+#include "entities/PlayerSamurai.hpp"
+#include "entities/PlayerShinobi.hpp"
+#include "entities/PlayerWizard.hpp"
 #include "enums/Enums.hpp"
 #include "exceptions/Exceptions.hpp"
 #include "state/Level.hpp"
@@ -30,8 +35,19 @@ void GameWorld::Update(const core::AssetManager &assets, const GameInput &input,
         HandleWorldBounds(state, *entity, elapsed_time);
     }
     auto old_level_progress = state.game_world.player.level_progress;
-    auto current_entity_level_progress = floorf(state.game_world.player_entity->position.x / 50.0f) * 50.0f;
+    auto current_entity_level_progress = floorf((*state.game_world.player_entity)->position.x / 50.0f) * 50.0f;
     auto level_progress_diff = current_entity_level_progress - old_level_progress;
+
+    if (input.switchCharacter)
+    {
+        auto type = std::array<enums::CharacterType, 4>({
+            enums::CharacterType::WIZARD,
+            enums::CharacterType::KNIGHT,
+            enums::CharacterType::SAMURAI,
+            enums::CharacterType::SHINOBI,
+        });
+        SwitchPlayerCharacterTo(assets, state, type.at(rand() % 4));
+    }
 
     if (level_progress_diff > state.settings.screen_size.x * 0.6f)
     {
@@ -57,13 +73,72 @@ void GameWorld::Update(const core::AssetManager &assets, const GameInput &input,
             }
         }
     }
+
+    auto entities_to_delete = std::vector<std::vector<std::shared_ptr<entity::Entity>>::iterator>();
+    for (auto iterator = state.game_world.entities.begin(); iterator != state.game_world.entities.end(); iterator++)
+    {
+        if (iterator->get()->is_removed)
+        {
+            entities_to_delete.push_back(iterator);
+        }
+    }
+    for (const auto &entity : entities_to_delete)
+    {
+        state.game_world.entities.erase(entity);
+    }
+}
+
+std::shared_ptr<entity::Entity>
+GameWorld::SwitchPlayerCharacterTo(const core::AssetManager &assets, state::App &state, enums::CharacterType type)
+{
+    std::shared_ptr<entity::Entity> new_character = nullptr;
+
+    std::cout << "switching " << (int)type << "\n";
+
+    switch (type)
+    {
+        case enums::CharacterType::KNIGHT:
+        {
+            new_character = std::make_shared<entity::PlayerKnight>(assets, state);
+            break;
+        }
+        case enums::CharacterType::WIZARD:
+        {
+            new_character = std::make_shared<entity::PlayerWizard>(assets, state);
+            break;
+        }
+        case enums::CharacterType::SAMURAI:
+        {
+            new_character = std::make_shared<entity::PlayerSamurai>(assets, state);
+            break;
+        }
+        case enums::CharacterType::SHINOBI:
+        {
+            new_character = std::make_shared<entity::PlayerShinobi>(assets, state);
+            break;
+        }
+        default:
+        {
+            throw exceptions::logic::LogicException("Enemy Type Unkown");
+        }
+    }
+
+    auto &old_player = **state.game_world.player_entity;
+    new_character->health = new_character->max_health * (old_player.health / old_player.max_health);
+    new_character->position = old_player.position;
+    old_player.is_removed = true;
+    *state.game_world.player_entity = new_character;
+
+    state.game_world.entities.push_back(new_character);
+
+    return new_character;
 }
 
 std::shared_ptr<entity::Entity>
 GameWorld::SpawnEnemy(const core::AssetManager &assets, state::App &state, enums::EnemyType type)
 {
     // spawn player
-    std::shared_ptr<entity::Entity> entity;
+    std::shared_ptr<entity::Entity> entity = nullptr;
 
     switch (type)
     {
@@ -92,6 +167,11 @@ GameWorld::SpawnEnemy(const core::AssetManager &assets, state::App &state, enums
             entity = std::make_shared<entity::EnemyWerewolf>(assets, state);
             break;
         }
+        case enums::EnemyType::VAMPIRE:
+        {
+            entity = std::make_shared<entity::EnemyVampire>(assets, state);
+            break;
+        }
         default:
         {
             throw exceptions::logic::LogicException("Enemy Type Unkown");
@@ -105,6 +185,8 @@ GameWorld::SpawnEnemy(const core::AssetManager &assets, state::App &state, enums
     entity->position = {spawn_x, spawn_y};
 
     state.game_world.entities.push_back(entity);
+
+    assets.sfx_select->Play();
 
     return entity;
 }
@@ -136,8 +218,8 @@ void GameWorld::Load(const core::AssetManager &assets, state::App &state)
 
     // spawn player
     auto player_entity = std::make_shared<entity::PlayerKnight>(assets, state);
-    player_entity->position = {0.f, 125.f};
-    state.game_world.player_entity = player_entity;
+    state.game_world.player_entity = std::make_shared<std::shared_ptr<entity::Entity>>(player_entity);
+    player_entity->position = {75.f, 125.f};
     state.game_world.entities.push_back(player_entity);
 
     auto &level = state.game_world.level = state::Level();
@@ -151,6 +233,7 @@ void GameWorld::Load(const core::AssetManager &assets, state::App &state)
                     enums::EnemyType::SATYR,
                     enums::EnemyType::SKELETON,
                     enums::EnemyType::WEREWOLF,
+                    enums::EnemyType::VAMPIRE,
                 },
             .new_spawn_rate = state::LevelSpawnRate(),
         },

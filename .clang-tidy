@@ -23,7 +23,7 @@ Checks: >
 
 WarningsAsErrors: ''
 HeaderFilterRegex: '(src|includes)/.*\.(h|hpp)$'
-ExcludeHeaderFilterRegex: '.*olcPixelGameEngine.*'
+ExcludeHeaderFilterRegex: '((.*\/olc\/.*)|(.*olcPixelGameEngine.*))'
 FormatStyle: file
 CheckOptions:
   readability-identifier-naming.NamespaceCase: lower_case

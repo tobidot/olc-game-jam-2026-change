@@ -7,7 +7,8 @@
 namespace entity
 {
 class Entity;
-}
+class PlayerBase;
+} // namespace entity
 
 namespace state
 {
@@ -18,7 +19,7 @@ struct GameWorld
     core::RectF boundaries = {.top = 0.f, .left = 0.f, .bottom = 0.f, .right = 0.f};
     Level level;
     Player player;
-    std::shared_ptr<entity::Entity> player_entity;
+    std::shared_ptr<std::shared_ptr<entity::Entity>> player_entity;
     std::vector<std::shared_ptr<entity::Entity>> entities;
 };
 

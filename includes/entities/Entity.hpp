@@ -20,6 +20,7 @@ namespace entity
 class Entity
 {
 public:
+    bool is_removed = false;
     float health = 100.0f;
     float max_health = 100.0f;
     std::string current_animation = "idle";

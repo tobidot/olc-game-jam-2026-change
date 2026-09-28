@@ -14,7 +14,7 @@ DirectAttack::DirectAttack(const DirectAttackConfig &config)
 
 DirectAttack DirectAttack::FromAnimationFrame(const DirectAttackFromAnimationFrameConfig &config)
 {
-    const auto &animation = config.target->animator.GetAnimation(config.animation_name);
+    const auto &animation = (*config.target)->animator.GetAnimation(config.animation_name);
 
     float hit_time = 0.0f;
     float hit_time_window = 0.0f;
@@ -52,7 +52,7 @@ void DirectAttack::Update(state::App &state, entity::Entity &entity, float elaps
     time += elapsed_time;
     entity.SetAnimation(animation_name);
 
-    auto difference = target->position - entity.position;
+    auto difference = (*target)->position - entity.position;
     entity.is_flipped = (difference.x < 0);
     if (time >= hit_time && time < hit_time + hit_time_window && !has_hit)
     {
@@ -60,7 +60,7 @@ void DirectAttack::Update(state::App &state, entity::Entity &entity, float elaps
         auto distance = difference.mag();
         if (distance < max_range)
         {
-            target->Damage(damage);
+            (*target)->Damage(damage);
             has_hit = true;
         }
     }

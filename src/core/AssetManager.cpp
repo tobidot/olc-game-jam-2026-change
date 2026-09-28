@@ -1,6 +1,7 @@
 #include "core/AssetManager.hpp"
 
 #include "core/Animator.hpp"
+#include "olc/olcPGEX3_Miniaudio.h"
 
 #include <cassert>
 #include <sstream>
@@ -67,7 +68,7 @@ std::shared_ptr<Animator> AssetManager::CreateAnimator(const std::vector<Animati
     return animator;
 }
 
-void AssetManager::Load(olc::PixelGameEngine &engine)
+void AssetManager::Load(olc::PixelGameEngine &engine, olc::ext::Miniaudio::AudioEngine &audio)
 {
     // images
     background_jungle_texture = CreateImage(engine, "backgrounds/PNG/Battleground4/Pale/Battleground4.png");
@@ -77,7 +78,12 @@ void AssetManager::Load(olc::PixelGameEngine &engine)
     LoadMinotaur(engine);
     LoadSkeleton(engine);
     LoadSatyr(engine);
+    LoadVampire(engine);
     LoadWerewolf(engine);
+    LoadSamurai(engine);
+    LoadShinobi(engine);
+    LoadWizard(engine);
+    LoadSelectSound(audio);
 }
 
 AnimationDefinition AssetManager::CreateSimpleAnimation(
@@ -114,13 +120,19 @@ AnimationDefinition AssetManager::CreateSimpleAnimation(
     };
 }
 
+void AssetManager::LoadSelectSound(olc::ext::Miniaudio::AudioEngine &audio)
+{
+    sfx_select = std::make_shared<olc::ext::Miniaudio::Sound>();
+    audio.CreateSoundFromFile(*sfx_select, "assets/sfx/select.wav");
+}
+
 void AssetManager::LoadKnight(olc::PixelGameEngine &engine)
 {
-    hero_knight_idle_texture = CreateImage(engine, "knight/Knight_1/Idle.png");
-    hero_knight_walk_texture = CreateImage(engine, "knight/Knight_1/Walk.png");
+    knight_idle_texture = CreateImage(engine, "knight/Knight_1/Idle.png");
+    knight_walk_texture = CreateImage(engine, "knight/Knight_1/Walk.png");
     // animations
-    auto hero_knight_idle_animation_defintion = CreateSimpleAnimation(
-        hero_knight_idle_texture,
+    auto knight_idle_animation_defintion = CreateSimpleAnimation(
+        knight_idle_texture,
         "idle",
         {4, 1},
         {{"pivot", {0.25f, 1.0f}}},
@@ -128,21 +140,21 @@ void AssetManager::LoadKnight(olc::PixelGameEngine &engine)
     );
 
     auto knight_walk_anchors = std::unordered_map<std::string, core::Vector>{{"pivot", {0.25f, 1.0f}}};
-    auto hero_knight_walk_animation_defintion = CreateSimpleAnimation(
-        hero_knight_walk_texture,
+    auto knight_walk_animation_defintion = CreateSimpleAnimation(
+        knight_walk_texture,
         "walk",
         {8, 1},
         {{"pivot", {0.25f, 1.0f}}},
         {.33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f}
     );
-    std::cout << "Defnition Name: " << hero_knight_walk_animation_defintion.name << "\n";
+    std::cout << "Defnition Name: " << knight_walk_animation_defintion.name << "\n";
     // animators
-    hero_knight_animator = CreateAnimator({
-        hero_knight_idle_animation_defintion,
-        hero_knight_walk_animation_defintion,
+    knight_animator = CreateAnimator({
+        knight_idle_animation_defintion,
+        knight_walk_animation_defintion,
     });
 
-    for (const auto &name : hero_knight_animator->GetAnimationNames())
+    for (const auto &name : knight_animator->GetAnimationNames())
     {
 
         std::cout << "A Name: " << name << "\n";
@@ -151,12 +163,12 @@ void AssetManager::LoadKnight(olc::PixelGameEngine &engine)
 
 void AssetManager::LoadMinotaur(olc::PixelGameEngine &engine)
 {
-    enemy_minotaur_idle_texture = CreateImage(engine, "minotaur/Minotaur_1/Idle.png");
-    enemy_minotaur_walk_texture = CreateImage(engine, "minotaur/Minotaur_1/Walk.png");
-    enemy_minotaur_attack1_texture = CreateImage(engine, "minotaur/Minotaur_1/Attack.png");
+    minotaur_idle_texture = CreateImage(engine, "minotaur/Minotaur_1/Idle.png");
+    minotaur_walk_texture = CreateImage(engine, "minotaur/Minotaur_1/Walk.png");
+    minotaur_attack1_texture = CreateImage(engine, "minotaur/Minotaur_1/Attack.png");
     // animations
     auto idle_animation_defintion = CreateSimpleAnimation(
-        enemy_minotaur_idle_texture,
+        minotaur_idle_texture,
         "idle",
         {10, 1},
         {{"pivot", {0.5f, 1.0f}}},
@@ -164,7 +176,7 @@ void AssetManager::LoadMinotaur(olc::PixelGameEngine &engine)
     );
 
     auto walk_animation_defintion = CreateSimpleAnimation(
-        enemy_minotaur_walk_texture,
+        minotaur_walk_texture,
         "walk",
         {12, 1},
         {{"pivot", {0.5f, 1.0f}}},
@@ -172,14 +184,14 @@ void AssetManager::LoadMinotaur(olc::PixelGameEngine &engine)
     );
 
     auto attack1_animation_defintion = CreateSimpleAnimation(
-        enemy_minotaur_attack1_texture,
+        minotaur_attack1_texture,
         "attack1",
         {5, 1},
         {{"pivot", {0.25f, 1.0f}}},
         {.33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f}
     );
     // animators
-    enemy_minotaur_animator = CreateAnimator({
+    minotaur_animator = CreateAnimator({
         idle_animation_defintion,
         walk_animation_defintion,
         attack1_animation_defintion,
@@ -188,12 +200,12 @@ void AssetManager::LoadMinotaur(olc::PixelGameEngine &engine)
 
 void AssetManager::LoadSatyr(olc::PixelGameEngine &engine)
 {
-    enemy_satyr_idle_texture = CreateImage(engine, "satyr/Satyr_2/Idle.png");
-    enemy_satyr_walk_texture = CreateImage(engine, "satyr/Satyr_2/Walk.png");
-    enemy_satyr_attack1_texture = CreateImage(engine, "satyr/Satyr_2/Attack.png");
+    satyr_idle_texture = CreateImage(engine, "satyr/Satyr_2/Idle.png");
+    satyr_walk_texture = CreateImage(engine, "satyr/Satyr_2/Walk.png");
+    satyr_attack1_texture = CreateImage(engine, "satyr/Satyr_2/Attack.png");
     // animations
     auto idle_animation_defintion = CreateSimpleAnimation(
-        enemy_satyr_idle_texture,
+        satyr_idle_texture,
         "idle",
         {7, 1},
         {{"pivot", {0.5f, 1.0f}}},
@@ -201,7 +213,7 @@ void AssetManager::LoadSatyr(olc::PixelGameEngine &engine)
     );
 
     auto walk_animation_defintion = CreateSimpleAnimation(
-        enemy_satyr_walk_texture,
+        satyr_walk_texture,
         "walk",
         {12, 1},
         {{"pivot", {0.5f, 1.0f}}},
@@ -209,14 +221,14 @@ void AssetManager::LoadSatyr(olc::PixelGameEngine &engine)
     );
 
     auto attack1_animation_defintion = CreateSimpleAnimation(
-        enemy_satyr_attack1_texture,
+        satyr_attack1_texture,
         "attack1",
         {8, 1},
         {{"pivot", {0.5f, 1.0f}}},
         {.33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f}
     );
     // animators
-    enemy_satyr_animator = CreateAnimator({
+    satyr_animator = CreateAnimator({
         idle_animation_defintion,
         walk_animation_defintion,
         attack1_animation_defintion,
@@ -225,12 +237,12 @@ void AssetManager::LoadSatyr(olc::PixelGameEngine &engine)
 
 void AssetManager::LoadSkeleton(olc::PixelGameEngine &engine)
 {
-    enemy_skeleton_idle_texture = CreateImage(engine, "skeleton/Skeleton_Warrior/Idle.png");
-    enemy_skeleton_walk_texture = CreateImage(engine, "skeleton/Skeleton_Warrior/Walk.png");
-    enemy_skeleton_attack1_texture = CreateImage(engine, "skeleton/Skeleton_Warrior/Attack_1.png");
+    skeleton_idle_texture = CreateImage(engine, "skeleton/Skeleton_Warrior/Idle.png");
+    skeleton_walk_texture = CreateImage(engine, "skeleton/Skeleton_Warrior/Walk.png");
+    skeleton_attack1_texture = CreateImage(engine, "skeleton/Skeleton_Warrior/Attack_1.png");
     // animations
     auto idle_animation_defintion = CreateSimpleAnimation(
-        enemy_skeleton_idle_texture,
+        skeleton_idle_texture,
         "idle",
         {7, 1},
         {{"pivot", {0.5f, 1.0f}}},
@@ -238,7 +250,7 @@ void AssetManager::LoadSkeleton(olc::PixelGameEngine &engine)
     );
 
     auto walk_animation_defintion = CreateSimpleAnimation(
-        enemy_skeleton_walk_texture,
+        skeleton_walk_texture,
         "walk",
         {7, 1},
         {{"pivot", {0.5f, 1.0f}}},
@@ -246,14 +258,14 @@ void AssetManager::LoadSkeleton(olc::PixelGameEngine &engine)
     );
 
     auto attack1_animation_defintion = CreateSimpleAnimation(
-        enemy_skeleton_attack1_texture,
+        skeleton_attack1_texture,
         "attack1",
         {5, 1},
         {{"pivot", {0.5f, 1.0f}}},
         {.33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f}
     );
     // animators
-    enemy_skeleton_animator = CreateAnimator({
+    skeleton_animator = CreateAnimator({
         idle_animation_defintion,
         walk_animation_defintion,
         attack1_animation_defintion,
@@ -262,12 +274,12 @@ void AssetManager::LoadSkeleton(olc::PixelGameEngine &engine)
 
 void AssetManager::LoadWerewolf(olc::PixelGameEngine &engine)
 {
-    enemy_werewolf_idle_texture = CreateImage(engine, "werewolf/Black_Werewolf/Idle.png");
-    enemy_werewolf_walk_texture = CreateImage(engine, "werewolf/Black_Werewolf/walk.png");
-    enemy_werewolf_attack1_texture = CreateImage(engine, "werewolf/Black_Werewolf/Attack_1.png");
+    werewolf_idle_texture = CreateImage(engine, "werewolf/Black_Werewolf/Idle.png");
+    werewolf_walk_texture = CreateImage(engine, "werewolf/Black_Werewolf/walk.png");
+    werewolf_attack1_texture = CreateImage(engine, "werewolf/Black_Werewolf/Attack_1.png");
     // animations
     auto idle_animation_defintion = CreateSimpleAnimation(
-        enemy_werewolf_idle_texture,
+        werewolf_idle_texture,
         "idle",
         {8, 1},
         {{"pivot", {0.5f, 1.0f}}},
@@ -275,7 +287,7 @@ void AssetManager::LoadWerewolf(olc::PixelGameEngine &engine)
     );
 
     auto walk_animation_defintion = CreateSimpleAnimation(
-        enemy_werewolf_walk_texture,
+        werewolf_walk_texture,
         "walk",
         {11, 1},
         {{"pivot", {0.5f, 1.0f}}},
@@ -283,14 +295,14 @@ void AssetManager::LoadWerewolf(olc::PixelGameEngine &engine)
     );
 
     auto attack1_animation_defintion = CreateSimpleAnimation(
-        enemy_werewolf_attack1_texture,
+        werewolf_attack1_texture,
         "attack1",
         {6, 1},
         {{"pivot", {0.5f, 1.0f}}},
         {.33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f}
     );
     // animators
-    enemy_werewolf_animator = CreateAnimator({
+    werewolf_animator = CreateAnimator({
         idle_animation_defintion,
         walk_animation_defintion,
         attack1_animation_defintion,
@@ -299,35 +311,183 @@ void AssetManager::LoadWerewolf(olc::PixelGameEngine &engine)
 
 void AssetManager::LoadGhost(olc::PixelGameEngine &engine)
 {
-    enemy_ghost_idle_texture = CreateImage(engine, "ghost/Yurei/Idle.png");
-    enemy_ghost_walk_texture = CreateImage(engine, "ghost/Yurei/Walk.png");
-    enemy_ghost_attack1_texture = CreateImage(engine, "ghost/Yurei/Attack_1.png");
+    ghost_idle_texture = CreateImage(engine, "ghost/Yurei/Idle.png");
+    ghost_walk_texture = CreateImage(engine, "ghost/Yurei/Walk.png");
+    ghost_attack1_texture = CreateImage(engine, "ghost/Yurei/Attack_1.png");
     // animations
     auto idle_animation_defintion = CreateSimpleAnimation(
-        enemy_ghost_idle_texture,
+        ghost_idle_texture,
         "idle",
         {5, 1},
         {{"pivot", {0.5f, 1.0f}}},
-        {0.08f, 0.16f, 0.16f, .33f, 0.5f}
+        {.33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f}
     );
 
     auto walk_animation_defintion = CreateSimpleAnimation(
-        enemy_ghost_walk_texture,
+        ghost_walk_texture,
         "walk",
         {5, 1},
         {{"pivot", {0.5f, 1.0f}}},
-        {.33f, .33f, .33f, .33f, .33f}
+        {.33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f}
     );
 
     auto attack1_animation_defintion = CreateSimpleAnimation(
-        enemy_ghost_attack1_texture,
+        ghost_attack1_texture,
         "attack1",
         {4, 1},
         {{"pivot", {0.5f, 1.0f}}},
-        {.05f, .05f, .2f, .2f}
+        {.33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f}
     );
     // animators
-    enemy_ghost_animator = CreateAnimator({
+    ghost_animator = CreateAnimator({
+        idle_animation_defintion,
+        walk_animation_defintion,
+        attack1_animation_defintion,
+    });
+}
+
+void AssetManager::LoadVampire(olc::PixelGameEngine &engine)
+{
+    vampire_idle_texture = CreateImage(engine, "vampire/Countess_Vampire/Idle.png");
+    vampire_walk_texture = CreateImage(engine, "vampire/Countess_Vampire/Walk.png");
+    vampire_attack1_texture = CreateImage(engine, "vampire/Countess_Vampire/Attack_1.png");
+    // animations
+    auto idle_animation_defintion = CreateSimpleAnimation(
+        vampire_idle_texture,
+        "idle",
+        {5, 1},
+        {{"pivot", {0.5f, 1.0f}}},
+        {.33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f}
+    );
+
+    auto walk_animation_defintion = CreateSimpleAnimation(
+        vampire_walk_texture,
+        "walk",
+        {6, 1},
+        {{"pivot", {0.5f, 1.0f}}},
+        {.33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f}
+    );
+
+    auto attack1_animation_defintion = CreateSimpleAnimation(
+        vampire_attack1_texture,
+        "attack1",
+        {6, 1},
+        {{"pivot", {0.5f, 1.0f}}},
+        {.33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f}
+    );
+    // animators
+    vampire_animator = CreateAnimator({
+        idle_animation_defintion,
+        walk_animation_defintion,
+        attack1_animation_defintion,
+    });
+}
+
+void AssetManager::LoadShinobi(olc::PixelGameEngine &engine)
+{
+    const auto idle_texture = shinobi_idle_texture = CreateImage(engine, "shinobi/Shinobi/Idle.png");
+    const auto walk_texture = shinobi_walk_texture = CreateImage(engine, "shinobi/Shinobi/Walk.png");
+    const auto attack1_texture = shinobi_attack1_texture = CreateImage(engine, "shinobi/Shinobi/Attack_1.png");
+    // animations
+    auto idle_animation_defintion = CreateSimpleAnimation(
+        idle_texture,
+        "idle",
+        {6, 1},
+        {{"pivot", {0.5f, 1.0f}}},
+        {.33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f}
+    );
+
+    auto walk_animation_defintion = CreateSimpleAnimation(
+        walk_texture,
+        "walk",
+        {8, 1},
+        {{"pivot", {0.5f, 1.0f}}},
+        {.33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f}
+    );
+
+    auto attack1_animation_defintion = CreateSimpleAnimation(
+        attack1_texture,
+        "attack1",
+        {5, 1},
+        {{"pivot", {0.5f, 1.0f}}},
+        {.33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f}
+    );
+    // animators
+    shinobi_animator = CreateAnimator({
+        idle_animation_defintion,
+        walk_animation_defintion,
+        attack1_animation_defintion,
+    });
+}
+
+void AssetManager::LoadSamurai(olc::PixelGameEngine &engine)
+{
+    const auto &idle_texture = shinobi_idle_texture = CreateImage(engine, "samurai/Samurai/Idle.png");
+    const auto &walk_texture = shinobi_walk_texture = CreateImage(engine, "samurai/Samurai/Walk.png");
+    const auto &attack1_texture = shinobi_attack1_texture = CreateImage(engine, "samurai/Samurai/Attack_1.png");
+    // animations
+    auto idle_animation_defintion = CreateSimpleAnimation(
+        idle_texture,
+        "idle",
+        {6, 1},
+        {{"pivot", {0.25f, 1.0f}}},
+        {.33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f}
+    );
+
+    auto walk_animation_defintion = CreateSimpleAnimation(
+        walk_texture,
+        "walk",
+        {9, 1},
+        {{"pivot", {0.5f, 1.0f}}},
+        {.33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f}
+    );
+
+    auto attack1_animation_defintion = CreateSimpleAnimation(
+        attack1_texture,
+        "attack1",
+        {4, 1},
+        {{"pivot", {0.5f, 1.0f}}},
+        {.33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f}
+    );
+    // animators
+    samurai_animator = CreateAnimator({
+        idle_animation_defintion,
+        walk_animation_defintion,
+        attack1_animation_defintion,
+    });
+}
+
+void AssetManager::LoadWizard(olc::PixelGameEngine &engine)
+{
+    const auto &idle_texture = shinobi_idle_texture = CreateImage(engine, "wizard/Wanderer Magican/Idle.png");
+    const auto &walk_texture = shinobi_walk_texture = CreateImage(engine, "wizard/Wanderer Magican/Walk.png");
+    const auto &attack1_texture = shinobi_attack1_texture = CreateImage(engine, "wizard/Wanderer Magican/Attack_1.png");
+    // animations
+    auto idle_animation_defintion = CreateSimpleAnimation(
+        idle_texture,
+        "idle",
+        {8, 1},
+        {{"pivot", {0.5f, 1.0f}}},
+        {.33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f}
+    );
+
+    auto walk_animation_defintion = CreateSimpleAnimation(
+        walk_texture,
+        "walk",
+        {7, 1},
+        {{"pivot", {0.5f, 1.0f}}},
+        {.33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f}
+    );
+
+    auto attack1_animation_defintion = CreateSimpleAnimation(
+        attack1_texture,
+        "attack1",
+        {7, 1},
+        {{"pivot", {0.25f, 1.0f}}},
+        {.33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f}
+    );
+    // animators
+    wizard_animator = CreateAnimator({
         idle_animation_defintion,
         walk_animation_defintion,
         attack1_animation_defintion,

@@ -32,7 +32,7 @@
     "C_Cpp.codeAnalysis.clangTidy.args": [
         "--extra-arg=-isystem/usr/lib/gcc/x86_64-linux-gnu/13/include",
         "--extra-arg=-D_Float128=__float128",
-        "--exclude-header-filter=.*olcPixelGameEngine.*"
+        "--exclude-header-filter=((.*\/olc\/.*)|(.*olcPixelGameEngine.*))"
     ],
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
 }
