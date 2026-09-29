@@ -74,6 +74,19 @@ void GameWorld::Update(const core::AssetManager &assets, const GameInput &input,
         }
     }
 
+    auto old_level_spawn_rate_time = state.game_world.level.spawn_rate_time;
+    auto new_level_spawn_rate_time = (state.game_world.level.spawn_rate_time += elapsed_time);
+    for (const auto &spawn_item_entry : state.game_world.level.spawn_rate.spawns)
+    {
+        if (old_level_spawn_rate_time < spawn_item_entry.first && new_level_spawn_rate_time > spawn_item_entry.first)
+        {
+            const auto type = spawn_item_entry.second;
+            SpawnEnemy(assets, state, type);
+        }
+    }
+    state.game_world.level.spawn_rate_time =
+        std::fmod(state.game_world.level.spawn_rate_time, state.game_world.level.spawn_rate.total_time);
+
     auto entities_to_delete = std::vector<std::vector<std::shared_ptr<entity::Entity>>::iterator>();
     for (auto iterator = state.game_world.entities.begin(); iterator != state.game_world.entities.end(); iterator++)
     {
@@ -235,15 +248,31 @@ void GameWorld::Load(const core::AssetManager &assets, state::App &state)
                     enums::EnemyType::WEREWOLF,
                     enums::EnemyType::VAMPIRE,
                 },
-            .new_spawn_rate = state::LevelSpawnRate(),
+            .new_spawn_rate =
+                state::LevelSpawnRate{
+                    .total_time = 10.0f,
+                    .spawns =
+                        {
+                            std::pair{1.f, enums::EnemyType::SKELETON},
+                            std::pair{1.f, enums::EnemyType::SKELETON},
+                            std::pair{3.f, enums::EnemyType::SKELETON},
+                            std::pair{4.f, enums::EnemyType::GHOST},
+                            std::pair{6.f, enums::EnemyType::VAMPIRE},
+                            std::pair{7.5f, enums::EnemyType::GHOST},
+                        },
+                },
         },
         state::LevelEvent{
             .at_progress = 400.0f,
-            .spawns =
-                {
-                    enums::EnemyType::GHOST,
+            .spawns = {enums::EnemyType::SATYR},
+            .new_spawn_rate = state::LevelSpawnRate{
+                .total_time = 15.0f,
+                .spawns = {
+                    std::pair{5.f, enums::EnemyType::WEREWOLF},
+                    std::pair{10.f, enums::EnemyType::MINOTAUR},
+                    std::pair{15.f, enums::EnemyType::SATYR},
                 },
-            .new_spawn_rate = state::LevelSpawnRate(),
+            },
         },
     };
     level.spawn_rate = state::LevelSpawnRate();

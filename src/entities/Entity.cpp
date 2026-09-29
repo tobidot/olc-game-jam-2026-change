@@ -53,5 +53,4 @@ void Entity::Damage(float amount)
 {
     health -= amount;
     damage_animation_time = 0;
-    std::cout << __FILE__ << "| HP: " << health << "\n";
 }

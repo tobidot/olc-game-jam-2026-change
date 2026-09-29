@@ -8,8 +8,8 @@ namespace state
 
 struct LevelSpawnRate
 {
-    std::vector<std::pair<float, std::vector<enums::EnemyType>>> spawns;
     float total_time = 0.0f;
+    std::vector<std::pair<float, enums::EnemyType>> spawns;
 };
 
 struct LevelEvent
