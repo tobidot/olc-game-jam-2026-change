@@ -7,7 +7,7 @@ using namespace entity;
 PlayerKnight::PlayerKnight(const core::AssetManager &assets, const state::App &state)
     : PlayerBase(enums::CharacterType::KNIGHT)
 {
-    health = max_health = 200.0f;
+    health = max_health = 500.0f;
     animator = *assets.knight_animator;
     scale = {1.f, 1.f};
     current_animation = "walk";
@@ -16,7 +16,5 @@ PlayerKnight::PlayerKnight(const core::AssetManager &assets, const state::App &s
 
 void PlayerKnight::Update(state::App &state, float elapsed_time)
 {
-    Entity::Update(state, elapsed_time);
-
-    position.x += elapsed_time * 30.0f;
+    PlayerBase::Update(state, elapsed_time);
 }

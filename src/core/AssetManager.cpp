@@ -128,37 +128,40 @@ void AssetManager::LoadSelectSound(olc::ext::Miniaudio::AudioEngine &audio)
 
 void AssetManager::LoadKnight(olc::PixelGameEngine &engine)
 {
-    knight_idle_texture = CreateImage(engine, "knight/Knight_1/Idle.png");
-    knight_walk_texture = CreateImage(engine, "knight/Knight_1/Walk.png");
+    const auto idle_texture = knight_idle_texture = CreateImage(engine, "knight/Knight_1/Idle.png");
+    const auto walk_texture = knight_walk_texture = CreateImage(engine, "knight/Knight_1/Walk.png");
+    const auto attack1_texture = knight_attack1_texture = CreateImage(engine, "knight/Knight_1/Attack 1.png");
     // animations
-    auto knight_idle_animation_defintion = CreateSimpleAnimation(
-        knight_idle_texture,
+    auto idle_animation_defintion = CreateSimpleAnimation(
+        idle_texture,
         "idle",
         {4, 1},
         {{"pivot", {0.25f, 1.0f}}},
-        {2.f, 0.16f, .16f, .66f}
+        {.33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f}
     );
 
-    auto knight_walk_anchors = std::unordered_map<std::string, core::Vector>{{"pivot", {0.25f, 1.0f}}};
-    auto knight_walk_animation_defintion = CreateSimpleAnimation(
-        knight_walk_texture,
+    auto walk_animation_defintion = CreateSimpleAnimation(
+        walk_texture,
         "walk",
         {8, 1},
         {{"pivot", {0.25f, 1.0f}}},
-        {.33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f}
+        {.33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f}
     );
-    std::cout << "Defnition Name: " << knight_walk_animation_defintion.name << "\n";
+
+    auto attack1_animation_defintion = CreateSimpleAnimation(
+        attack1_texture,
+        "attack1",
+        {5, 1},
+        {{"pivot", {0.5f, 1.0f}}},
+        {.33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f, .33f}
+    );
+
     // animators
     knight_animator = CreateAnimator({
-        knight_idle_animation_defintion,
-        knight_walk_animation_defintion,
+        idle_animation_defintion,
+        walk_animation_defintion,
+        attack1_animation_defintion,
     });
-
-    for (const auto &name : knight_animator->GetAnimationNames())
-    {
-
-        std::cout << "A Name: " << name << "\n";
-    }
 }
 
 void AssetManager::LoadMinotaur(olc::PixelGameEngine &engine)

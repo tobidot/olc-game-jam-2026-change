@@ -8,7 +8,6 @@
 #include "entities/EnemyVampire.hpp"
 #include "entities/EnemyWerewolf.hpp"
 #include "entities/Entity.hpp"
-#include "entities/PlayerBase.hpp"
 #include "entities/PlayerKnight.hpp"
 #include "entities/PlayerSamurai.hpp"
 #include "entities/PlayerShinobi.hpp"
@@ -31,8 +30,8 @@ void GameWorld::Update(const core::AssetManager &assets, const GameInput &input,
 {
     for (auto &entity : state.game_world.entities)
     {
-        entity->Update(state, elapsed_time);
-        HandleWorldBounds(state, *entity, elapsed_time);
+        (*entity)->Update(state, elapsed_time);
+        HandleWorldBounds(state, **entity, elapsed_time);
     }
     auto old_level_progress = state.game_world.player.level_progress;
     auto current_entity_level_progress = floorf((*state.game_world.player_entity)->position.x / 50.0f) * 50.0f;
@@ -87,10 +86,10 @@ void GameWorld::Update(const core::AssetManager &assets, const GameInput &input,
     state.game_world.level.spawn_rate_time =
         std::fmod(state.game_world.level.spawn_rate_time, state.game_world.level.spawn_rate.total_time);
 
-    auto entities_to_delete = std::vector<std::vector<std::shared_ptr<entity::Entity>>::iterator>();
+    auto entities_to_delete = std::vector<std::vector<entity::EntityHandle>::iterator>();
     for (auto iterator = state.game_world.entities.begin(); iterator != state.game_world.entities.end(); iterator++)
     {
-        if (iterator->get()->is_removed)
+        if ((***iterator).is_removed)
         {
             entities_to_delete.push_back(iterator);
         }
@@ -101,12 +100,10 @@ void GameWorld::Update(const core::AssetManager &assets, const GameInput &input,
     }
 }
 
-std::shared_ptr<entity::Entity>
+entity::EntityHandle
 GameWorld::SwitchPlayerCharacterTo(const core::AssetManager &assets, state::App &state, enums::CharacterType type)
 {
-    std::shared_ptr<entity::Entity> new_character = nullptr;
-
-    std::cout << "switching " << (int)type << "\n";
+    entity::EntityRef new_character = nullptr;
 
     switch (type)
     {
@@ -142,16 +139,13 @@ GameWorld::SwitchPlayerCharacterTo(const core::AssetManager &assets, state::App 
     old_player.is_removed = true;
     *state.game_world.player_entity = new_character;
 
-    state.game_world.entities.push_back(new_character);
-
-    return new_character;
+    return state.game_world.player_entity;
 }
 
-std::shared_ptr<entity::Entity>
-GameWorld::SpawnEnemy(const core::AssetManager &assets, state::App &state, enums::EnemyType type)
+entity::EntityHandle GameWorld::SpawnEnemy(const core::AssetManager &assets, state::App &state, enums::EnemyType type)
 {
     // spawn player
-    std::shared_ptr<entity::Entity> entity = nullptr;
+    entity::EntityRef entity = nullptr;
 
     switch (type)
     {
@@ -197,11 +191,12 @@ GameWorld::SpawnEnemy(const core::AssetManager &assets, state::App &state, enums
     auto spawn_y = state.settings.screen_size.y * random;
     entity->position = {spawn_x, spawn_y};
 
-    state.game_world.entities.push_back(entity);
-
     assets.sfx_select->Play();
 
-    return entity;
+    auto handle = std::make_shared<entity::EntityRef>(entity);
+    state.game_world.entities.push_back(handle);
+
+    return handle;
 }
 
 void GameWorld::HandleWorldBounds(state::App &state, entity::Entity &entity, float elapsed_time)
@@ -231,9 +226,9 @@ void GameWorld::Load(const core::AssetManager &assets, state::App &state)
 
     // spawn player
     auto player_entity = std::make_shared<entity::PlayerKnight>(assets, state);
-    state.game_world.player_entity = std::make_shared<std::shared_ptr<entity::Entity>>(player_entity);
     player_entity->position = {75.f, 125.f};
-    state.game_world.entities.push_back(player_entity);
+    state.game_world.player_entity = std::make_shared<std::shared_ptr<entity::Entity>>(player_entity);
+    state.game_world.entities.push_back(state.game_world.player_entity);
 
     auto &level = state.game_world.level = state::Level();
     level.events = {

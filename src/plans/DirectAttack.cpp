@@ -10,6 +10,7 @@ DirectAttack::DirectAttack(const DirectAttackConfig &config)
       hit_time_window(config.hit_time_window), damage(config.damage), animation_name(config.animation_name),
       duration(config.duration)
 {
+    name = "direct-attack";
 }
 
 DirectAttack DirectAttack::FromAnimationFrame(const DirectAttackFromAnimationFrameConfig &config)
@@ -43,6 +44,12 @@ DirectAttack DirectAttack::FromAnimationFrame(const DirectAttackFromAnimationFra
 
 void DirectAttack::Update(state::App &state, entity::Entity &entity, float elapsed_time)
 {
+    if (time <= 0)
+    {
+        // on first update reset animation time
+        entity.current_animation_time = 0;
+    }
+
     BasePlan::Update(state, entity, elapsed_time);
     if (is_finished)
     {
@@ -67,7 +74,7 @@ void DirectAttack::Update(state::App &state, entity::Entity &entity, float elaps
 
     if (time > duration)
     {
-        entity.SetAnimation("idle");
         is_finished = true;
+        entity.SetNextAnimation("idle");
     }
 }

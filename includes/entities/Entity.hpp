@@ -21,9 +21,10 @@ class Entity
 {
 public:
     bool is_removed = false;
-    float health = 100.0f;
+    float health = 50.0f;
     float max_health = 100.0f;
     std::string current_animation = "idle";
+    std::string next_animation;
     float current_animation_time = 0.0f;
     core::Vector position = core::Vector(0.f, 0.f);
     core::Vector scale = core::Vector(1.f, 1.f);
@@ -48,6 +49,10 @@ public:
     virtual olc::ImageRegion GetImage() const;
     virtual void Damage(float amount);
     void SetAnimation(const std::string &name);
+    void SetNextAnimation(const std::string &name);
 };
+
+using EntityRef = std::shared_ptr<Entity>;
+using EntityHandle = std::shared_ptr<EntityRef>;
 
 } // namespace entity

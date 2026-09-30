@@ -16,7 +16,5 @@ PlayerShinobi::PlayerShinobi(const core::AssetManager &assets, const state::App 
 
 void PlayerShinobi::Update(state::App &state, float elapsed_time)
 {
-    Entity::Update(state, elapsed_time);
-
-    position.x += elapsed_time * 30.0f;
+    PlayerBase::Update(state, elapsed_time);
 }

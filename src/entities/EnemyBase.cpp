@@ -1,6 +1,5 @@
 #include "entities/EnemyBase.hpp"
 
-#include "entities/PlayerBase.hpp"
 #include "plans/BasePlan.hpp"
 #include "plans/DirectAttack.hpp"
 #include "plans/Move.hpp"

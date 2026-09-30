@@ -7,6 +7,7 @@ using namespace plan;
 
 Move::Move(const core::Vector &target, float velocity) : target(target), velocity(velocity)
 {
+    name = "move";
 }
 
 void Move::Update(state::App &state, entity::Entity &entity, float elapsed_time)
@@ -27,7 +28,7 @@ void Move::Update(state::App &state, entity::Entity &entity, float elapsed_time)
     }
     else
     {
-        entity.SetAnimation("idle");
         is_finished = true;
+        entity.SetNextAnimation("idle");
     }
 }
