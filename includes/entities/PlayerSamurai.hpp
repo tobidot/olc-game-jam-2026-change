@@ -11,7 +11,7 @@ namespace entity
 class PlayerSamurai : public PlayerBase
 {
 public:
-    PlayerSamurai(const core::AssetManager &assets, const state::App &state);
+    PlayerSamurai(const core::AssetManager &assets, const state::App &state, size_t id);
     ~PlayerSamurai() override = default;
 
 public:

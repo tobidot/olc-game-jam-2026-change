@@ -48,13 +48,24 @@ public:
     std::unordered_map<std::string, Animation> animations;
 
 public:
+    [[nodiscard]]
     Animation GetAnimation(const std::string &name) const;
+    [[nodiscard]]
     AnimationFrame GetAnimationFrame(const std::string &name, float seconds) const;
+    [[nodiscard]]
     olc::ImageRegion GetImage(const std::string &name, float seconds) const;
-    olc::vf2d GetImageAnchor(const std::string &name, float seconds, const std::string &anchor) const;
+    [[nodiscard]]
+    core::Vector GetImageAnchor(const std::string &name, float seconds, const std::string &anchor) const;
+    [[nodiscard]]
     bool HasImageAnchor(const std::string &name, float seconds, const std::string &anchor) const;
-    olc::vf2d GetImagePivot(const std::string &name, float seconds) const;
+    [[nodiscard]]
+    core::Vector GetImagePivot(const std::string &name, float seconds) const;
+    [[nodiscard]]
     std::vector<std::string> GetAnimationNames() const;
+    [[nodiscard]]
+    std::pair<float, float> GetFrameWindowTime(const std::string &name, size_t frame_start, size_t frame_end) const;
+    [[nodiscard]]
+    float GetAnimationSpeedForDuration(const std::string &name, float target_duration) const;
 
 public:
     Animation CreateAnimation(

@@ -2,7 +2,7 @@
 
 using namespace entity;
 
-EnemyVampire::EnemyVampire(const core::AssetManager &assets, const state::App &state)
+EnemyVampire::EnemyVampire(const core::AssetManager &assets, const state::App &state, size_t id) : EnemyBase(id)
 {
     health = max_health = 10.0f;
     animator = *assets.vampire_animator;

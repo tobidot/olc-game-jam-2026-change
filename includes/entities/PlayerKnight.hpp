@@ -11,7 +11,7 @@ namespace entity
 class PlayerKnight : public PlayerBase
 {
 public:
-    PlayerKnight(const core::AssetManager &assets, const state::App &state);
+    PlayerKnight(const core::AssetManager &assets, const state::App &state, size_t id);
     ~PlayerKnight() override = default;
 
 public:

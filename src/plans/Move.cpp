@@ -10,6 +10,11 @@ Move::Move(const core::Vector &target, float velocity) : target(target), velocit
     name = "move";
 }
 
+void Move::Start(state::App &state, entity::Entity &entity)
+{
+    entity.SetAnimation("walk");
+}
+
 void Move::Update(state::App &state, entity::Entity &entity, float elapsed_time)
 {
     BasePlan::Update(state, entity, elapsed_time);
@@ -24,11 +29,10 @@ void Move::Update(state::App &state, entity::Entity &entity, float elapsed_time)
     {
         entity.position += difference.norm() * elapsed_time * velocity;
         entity.is_flipped = difference.x < 0;
-        entity.SetAnimation("walk");
     }
     else
     {
         is_finished = true;
-        entity.SetNextAnimation("idle");
+        entity.SetAnimation("idle");
     }
 }

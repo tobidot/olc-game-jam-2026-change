@@ -59,6 +59,30 @@ public:
     }
 };
 
+class AnimationFrameIndexNotFoundException : public RuntimeException
+{
+public:
+    explicit AnimationFrameIndexNotFoundException(
+        const std::string &animation, size_t index, std::source_location location = std::source_location::current()
+    )
+        : RuntimeException(
+              (ss() << "Frame '" << index << "' not found in animation '" << animation << "'").str(), location
+          )
+    {
+    }
+};
+
+class AnimationInvalidFrameWindowException : public RuntimeException
+{
+public:
+    explicit AnimationInvalidFrameWindowException(
+        const std::string &message, std::source_location location = std::source_location::current()
+    )
+        : RuntimeException(message, location)
+    {
+    }
+};
+
 } // namespace runtime
 
 namespace logic

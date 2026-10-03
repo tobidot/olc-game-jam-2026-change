@@ -17,6 +17,10 @@ public:
 public:
     virtual void Start(state::App &state, entity::Entity &entity);
     virtual void Update(state::App &state, entity::Entity &entity, float elapsed_time);
+
+public:
+    [[nodiscard]]
+    bool IsInTimeWindow(std::pair<float, float> window, float now, float elapsed_time) const;
 };
 
 } // namespace plan

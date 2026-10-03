@@ -12,42 +12,88 @@ namespace core
 class AssetManager
 {
 public:
+    std::vector<float> get_default_animation_times() const
+    {
+        return {
+            .33f,
+            .33f,
+            .33f,
+            .33f,
+            .33f,
+            .33f,
+            .33f,
+            .33f,
+            .33f,
+            .33f,
+            .33f,
+            .33f,
+            .33f,
+            .33f,
+            .33f,
+            .33f,
+        };
+    };
+
+public:
     // sounds
     std::shared_ptr<olc::ext::Miniaudio::Sound> sfx_select;
+    std::shared_ptr<olc::ext::Miniaudio::Sound> sfx_swarp;
     // plain images
     std::shared_ptr<olc::Image> background_jungle_texture;
     //
     std::shared_ptr<olc::Image> knight_idle_texture;
     std::shared_ptr<olc::Image> knight_walk_texture;
     std::shared_ptr<olc::Image> knight_attack1_texture;
+    std::shared_ptr<olc::Image> knight_die_texture;
     std::shared_ptr<olc::Image> samurai_idle_texture;
     std::shared_ptr<olc::Image> samurai_walk_texture;
     std::shared_ptr<olc::Image> samurai_attack1_texture;
+    std::shared_ptr<olc::Image> samurai_die_texture;
     std::shared_ptr<olc::Image> shinobi_idle_texture;
     std::shared_ptr<olc::Image> shinobi_walk_texture;
     std::shared_ptr<olc::Image> shinobi_attack1_texture;
+    std::shared_ptr<olc::Image> shinobi_die_texture;
     std::shared_ptr<olc::Image> wizard_idle_texture;
     std::shared_ptr<olc::Image> wizard_walk_texture;
     std::shared_ptr<olc::Image> wizard_attack1_texture;
+    std::shared_ptr<olc::Image> wizard_die_texture;
     //
     std::shared_ptr<olc::Image> ghost_idle_texture;
     std::shared_ptr<olc::Image> ghost_walk_texture;
     std::shared_ptr<olc::Image> ghost_attack1_texture;
+    std::shared_ptr<olc::Image> ghost_attack2_texture;
+    std::shared_ptr<olc::Image> ghost_attack3_texture;
+    std::shared_ptr<olc::Image> ghost_attack4_texture;
+    std::shared_ptr<olc::Image> ghost_die_texture;
     std::shared_ptr<olc::Image> minotaur_idle_texture;
     std::shared_ptr<olc::Image> minotaur_walk_texture;
     std::shared_ptr<olc::Image> minotaur_attack1_texture;
+    std::shared_ptr<olc::Image> minotaur_die_texture;
     std::shared_ptr<olc::Image> skeleton_idle_texture;
     std::shared_ptr<olc::Image> skeleton_walk_texture;
     std::shared_ptr<olc::Image> skeleton_attack1_texture;
+    std::shared_ptr<olc::Image> skeleton_attack2_texture;
+    std::shared_ptr<olc::Image> skeleton_attack3_texture;
+    std::shared_ptr<olc::Image> skeleton_die_texture;
     std::shared_ptr<olc::Image> satyr_idle_texture;
     std::shared_ptr<olc::Image> satyr_walk_texture;
     std::shared_ptr<olc::Image> satyr_attack1_texture;
+    std::shared_ptr<olc::Image> satyr_die_texture;
     std::shared_ptr<olc::Image> werewolf_idle_texture;
     std::shared_ptr<olc::Image> werewolf_walk_texture;
     std::shared_ptr<olc::Image> werewolf_attack1_texture;
+    std::shared_ptr<olc::Image> werewolf_attack2_texture;
+    std::shared_ptr<olc::Image> werewolf_attack3_texture;
+    std::shared_ptr<olc::Image> werewolf_die_texture;
     std::shared_ptr<olc::Image> vampire_idle_texture;
     std::shared_ptr<olc::Image> vampire_walk_texture;
     std::shared_ptr<olc::Image> vampire_attack1_texture;
+    std::shared_ptr<olc::Image> vampire_attack2_texture;
+    std::shared_ptr<olc::Image> vampire_attack3_texture;
+    std::shared_ptr<olc::Image> vampire_attack4_texture;
+    std::shared_ptr<olc::Image> vampire_die_texture;
+    // effect images
+    std::shared_ptr<olc::Image> satyr_missle1_texture;
     // animations
     std::shared_ptr<Animator> knight_animator;
     std::shared_ptr<Animator> samurai_animator;
@@ -59,6 +105,8 @@ public:
     std::shared_ptr<Animator> satyr_animator;
     std::shared_ptr<Animator> werewolf_animator;
     std::shared_ptr<Animator> vampire_animator;
+    // effect animations
+    std::shared_ptr<Animator> satyr_missle1_animator;
 
 public:
     void Load(olc::PixelGameEngine &engine, olc::ext::Miniaudio::AudioEngine &audio);
@@ -72,7 +120,9 @@ public:
     void LoadSkeleton(olc::PixelGameEngine &engine);
     void LoadSatyr(olc::PixelGameEngine &engine);
     void LoadWerewolf(olc::PixelGameEngine &engine);
+    void LoadSatyrMissle1(olc::PixelGameEngine &engine);
     void LoadSelectSound(olc::ext::Miniaudio::AudioEngine &audio);
+    void LoadSwarpSound(olc::ext::Miniaudio::AudioEngine &audio);
     [[nodiscard]]
     std::shared_ptr<olc::Image> CreateImage(olc::PixelGameEngine &engine, const char *path) const;
     [[nodiscard]]

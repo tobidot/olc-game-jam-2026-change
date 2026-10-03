@@ -4,8 +4,8 @@
 
 using namespace entity;
 
-PlayerKnight::PlayerKnight(const core::AssetManager &assets, const state::App &state)
-    : PlayerBase(enums::CharacterType::KNIGHT)
+PlayerKnight::PlayerKnight(const core::AssetManager &assets, const state::App &state, size_t id)
+    : PlayerBase(enums::CharacterType::KNIGHT, id)
 {
     health = max_health = 500.0f;
     animator = *assets.knight_animator;

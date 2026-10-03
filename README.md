@@ -40,3 +40,19 @@ At `localhost:8080/build/Main.html` the game should appear.
 
 ## Problem Solving
 
+
+Make debug build
+
+`cmake --build build-debug && gdb ./build-debug/Main`
+```
+start
+next                                    // line
+step                                    // into
+catch throw
+break -source <file.cpp> -line <XX>     // eg "break -source src/entities/PlayerBase.cpp -line 60"
+continue
+info stack
+info locals
+print <expression>
+quit
+```

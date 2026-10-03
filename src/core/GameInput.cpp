@@ -22,6 +22,37 @@ void GameInput::PreUpdate(const olc::hw::Mouse &mouse, const olc::hw::Keyboard &
         std::cout << "switch cahar" << "\n";
     }
 
+    if (keyboard.GetKey(olc::Key::Q).bPressed)
+    {
+        cheatSpawnEnemy = true;
+        cheatSpawnEnemyType = enums::EnemyType::GHOST;
+    }
+    if (keyboard.GetKey(olc::Key::W).bPressed)
+    {
+        cheatSpawnEnemy = true;
+        cheatSpawnEnemyType = enums::EnemyType::MINOTAUR;
+    }
+    if (keyboard.GetKey(olc::Key::E).bPressed)
+    {
+        cheatSpawnEnemy = true;
+        cheatSpawnEnemyType = enums::EnemyType::SATYR;
+    }
+    if (keyboard.GetKey(olc::Key::R).bPressed)
+    {
+        cheatSpawnEnemy = true;
+        cheatSpawnEnemyType = enums::EnemyType::SKELETON;
+    }
+    if (keyboard.GetKey(olc::Key::T).bPressed)
+    {
+        cheatSpawnEnemy = true;
+        cheatSpawnEnemyType = enums::EnemyType::VAMPIRE;
+    }
+    if (keyboard.GetKey(olc::Key::T).bPressed)
+    {
+        cheatSpawnEnemy = true;
+        cheatSpawnEnemyType = enums::EnemyType::WEREWOLF;
+    }
+
     const auto mouse_position = mouse.GetPosition();
     const auto diff = mouse_position - screen_center;
     const auto force = diff * fElapsedTime / 5.0f * diff.mag2() / 10000.0f;
@@ -32,5 +63,6 @@ void GameInput::PostUpdate(float fElapsedTime)
 {
     requestToggleFullscreen = false;
     switchCharacter = false;
+    cheatSpawnEnemy = false;
     // boost = false;
 }

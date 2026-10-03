@@ -4,8 +4,8 @@
 
 using namespace entity;
 
-PlayerShinobi::PlayerShinobi(const core::AssetManager &assets, const state::App &state)
-    : PlayerBase(enums::CharacterType::SHINOBI)
+PlayerShinobi::PlayerShinobi(const core::AssetManager &assets, const state::App &state, size_t id)
+    : PlayerBase(enums::CharacterType::SHINOBI, id)
 {
     health = max_health = 200.0f;
     animator = *assets.shinobi_animator;

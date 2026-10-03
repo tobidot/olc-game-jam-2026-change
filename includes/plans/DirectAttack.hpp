@@ -3,12 +3,14 @@
 #include "plans/BasePlan.hpp"
 #include "state/App.hpp"
 
+#include <memory>
+
 namespace plan
 {
 
 struct DirectAttackConfig
 {
-    entity::EntityHandle target;
+    std::shared_ptr<entity::EntityHandle> target;
     std::string animation_name;
     float hit_time;
     float hit_time_window;
@@ -19,9 +21,11 @@ struct DirectAttackConfig
 
 struct DirectAttackFromAnimationFrameConfig
 {
-    entity::EntityHandle target;
+    std::shared_ptr<entity::EntityHandle> source;
+    std::shared_ptr<entity::EntityHandle> target;
     std::string animation_name;
     size_t hit_frame;
+    float duration;
     float max_range;
     float damage;
 };
@@ -29,7 +33,7 @@ struct DirectAttackFromAnimationFrameConfig
 class DirectAttack : public BasePlan
 {
 public:
-    entity::EntityHandle target;
+    std::shared_ptr<entity::EntityHandle> target;
     std::string animation_name;
     float time = 0.f;
     float hit_time = 0.f;
@@ -46,6 +50,7 @@ public:
     static DirectAttack FromAnimationFrame(const DirectAttackFromAnimationFrameConfig &config);
 
 public:
+    void Start(state::App &state, entity::Entity &entity) override;
     void Update(state::App &state, entity::Entity &entity, float elapsed_time) override;
 };
 

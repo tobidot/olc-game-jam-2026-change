@@ -11,7 +11,7 @@ namespace entity
 class PlayerWizard : public PlayerBase
 {
 public:
-    PlayerWizard(const core::AssetManager &assets, const state::App &state);
+    PlayerWizard(const core::AssetManager &assets, const state::App &state, size_t id);
     ~PlayerWizard() override = default;
 
 public:

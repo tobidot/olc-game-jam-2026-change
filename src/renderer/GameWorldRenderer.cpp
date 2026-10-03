@@ -16,13 +16,13 @@ void GameWorldRenderer::Draw(olc::Draw &draw, const core::AssetManager &assets, 
     auto sorted_entites = std::vector(state.game_world.entities);
     std::ranges::sort(
         sorted_entites,
-        [](const entity::EntityHandle &first, const entity::EntityHandle &second)
-        { return (*first)->position.y < (*second)->position.y; }
+        [](const std::shared_ptr<entity::EntityHandle> &first, const std::shared_ptr<entity::EntityHandle> &second)
+        { return first->ref->position.y < second->ref->position.y; }
     );
 
     for (const auto &entity : sorted_entites)
     {
-        DrawEntity(draw, assets, state, **entity);
+        DrawEntity(draw, assets, state, *entity->ref);
     }
 
     world_transform.pop();
@@ -56,8 +56,8 @@ void GameWorldRenderer::DrawEntity(
     const auto flipped = entity.is_flipped ? core::Vector{-1.f, 1.f} : core::Vector{1.f, 1.f};
     const auto pivot = entity.animator.GetImagePivot(entity.current_animation, entity.current_animation_time);
     const auto pivot_pixels = -pivot * image.regionsize * entity.scale * flipped;
-    draw.Image(image, pivot_pixels, entity.scale * flipped, tint);
-    draw.Circle({0, 0}, 10.0f);
+    draw.Image(image, pivot_pixels + core::Vector{0.f, -entity.z_offset}, entity.scale * flipped, tint);
+    draw.FilledEllipse({0, 0}, entity.shape.size.x, entity.shape.size.y * 0.5f, olc::Pixel(0x22000088));
 
     world_transform.pop();
     draw.SetWorldTransform(world_transform);

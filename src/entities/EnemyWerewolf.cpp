@@ -2,7 +2,7 @@
 
 using namespace entity;
 
-EnemyWerewolf::EnemyWerewolf(const core::AssetManager &assets, const state::App &state)
+EnemyWerewolf::EnemyWerewolf(const core::AssetManager &assets, const state::App &state, size_t id) : EnemyBase(id)
 {
     health = max_health = 10.0f;
     animator = *assets.werewolf_animator;

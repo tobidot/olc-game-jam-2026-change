@@ -72,13 +72,13 @@ bool Animator::HasImageAnchor(const std::string &name, float seconds, const std:
     return frame.anchors.contains(anchor);
 }
 
-olc::vf2d Animator::GetImageAnchor(const std::string &name, float seconds, const std::string &anchor) const
+core::Vector Animator::GetImageAnchor(const std::string &name, float seconds, const std::string &anchor) const
 {
     auto frame = GetAnimationFrame(name, seconds);
     return frame.anchors.at(anchor);
 }
 
-olc::vf2d Animator::GetImagePivot(const std::string &name, float seconds) const
+core::Vector Animator::GetImagePivot(const std::string &name, float seconds) const
 {
     auto frame = GetAnimationFrame(name, seconds);
     if (HasImageAnchor(name, seconds, "pivot"))
@@ -86,7 +86,7 @@ olc::vf2d Animator::GetImagePivot(const std::string &name, float seconds) const
         return GetImageAnchor(name, seconds, "pivot");
     }
     auto animation = GetAnimation(name);
-    return (frame.bottom_right - frame.top_left) * 0.5f * animation.image->Size();
+    return core::Vector((frame.bottom_right - frame.top_left) * 0.5f * animation.image->Size());
 }
 
 Animation Animator::CreateAnimation(
@@ -116,4 +116,46 @@ Animation Animator::CreateAnimation(
     animations.emplace(std::pair<std::string, Animation>(name, animation));
 
     return animation;
+}
+
+float Animator::GetAnimationSpeedForDuration(const std::string &name, float target_duration) const
+{
+    const auto &animation = GetAnimation(name);
+    return animation.total_seconds / target_duration;
+}
+
+std::pair<float, float>
+Animator::GetFrameWindowTime(const std::string &name, size_t frame_start, size_t frame_end) const
+{
+    const auto &animation = GetAnimation(name);
+    if (frame_end < frame_start)
+    {
+        throw exceptions::runtime::AnimationInvalidFrameWindowException("Starting frame may not be after ending frame");
+    }
+    if (frame_start >= animation.frames.size())
+    {
+        throw exceptions::runtime::AnimationFrameIndexNotFoundException(name, frame_start);
+    }
+    if (frame_end >= animation.frames.size())
+    {
+        throw exceptions::runtime::AnimationFrameIndexNotFoundException(name, frame_end);
+    }
+
+    float start = 0.0f;
+    float end = animation.total_seconds;
+    float current_seconds = 0.0f;
+    for (size_t i = 0; i <= frame_end; ++i)
+    {
+        const auto &frame = animation.frames.at(i);
+        if (i == frame_start)
+        {
+            start = current_seconds;
+        }
+        current_seconds += frame.seconds;
+        if (i == frame_end)
+        {
+            end = current_seconds;
+        }
+    }
+    return std::make_pair(start, end);
 }

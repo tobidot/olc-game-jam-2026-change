@@ -11,6 +11,9 @@
 #include "core/Geometry.hpp"
 #include "exceptions/Exceptions.hpp"
 #include "renderer/Renderer.hpp"
+#include "services/EntityService.hpp"
+#include "services/RootService.hpp"
+#include "services/SoundService.hpp"
 #include "state/App.hpp"
 #include "systems/Camera.hpp"
 #include "systems/GameInput.hpp"
@@ -47,10 +50,19 @@ public:
         camera = std::make_unique<systems::Camera>();
         renderer = std::make_unique<renderer::Renderer>();
 
+        // initialize services
+        service::root(&*asset_manager, &*app_state);
+
         if (!InstallSystemExtension(&audio))
         {
             throw std::runtime_error("Failed to install olcPGEX3_miniaudio");
         }
+    }
+
+    ~Main()
+    {
+        // cleanup services before systems are gone
+        service::root().reset();
     }
 
 protected:

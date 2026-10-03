@@ -4,8 +4,8 @@
 
 using namespace entity;
 
-PlayerSamurai::PlayerSamurai(const core::AssetManager &assets, const state::App &state)
-    : PlayerBase(enums::CharacterType::SAMURAI)
+PlayerSamurai::PlayerSamurai(const core::AssetManager &assets, const state::App &state, size_t id)
+    : PlayerBase(enums::CharacterType::SAMURAI, id)
 {
     health = max_health = 200.0f;
     animator = *assets.samurai_animator;

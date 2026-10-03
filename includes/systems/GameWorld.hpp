@@ -27,8 +27,9 @@ public:
     void Seed(int generator_seed, const core::AssetManager &asset_manager);
     void Update(const core::AssetManager &assets, const GameInput &input, state::App &state, float elapsed_time);
     void HandleWorldBounds(state::App &state, entity::Entity &entity, float elapsed_time);
-    entity::EntityHandle SpawnEnemy(const core::AssetManager &assets, state::App &state, enums::EnemyType type);
-    entity::EntityHandle
+    std::shared_ptr<entity::EntityHandle>
+    SpawnEnemy(const core::AssetManager &assets, state::App &state, enums::EnemyType type);
+    std::shared_ptr<entity::EntityHandle>
     SwitchPlayerCharacterTo(const core::AssetManager &assets, state::App &state, enums::CharacterType type);
 };
 

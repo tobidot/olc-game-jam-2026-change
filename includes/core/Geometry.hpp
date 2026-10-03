@@ -83,6 +83,7 @@ template <typename T> struct Rect
 struct Polygon
 {
     std::vector<Vector> points;
+    core::Vector size;
 };
 
 using RectF = Rect<float>;

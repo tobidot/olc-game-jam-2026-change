@@ -11,7 +11,7 @@ namespace entity
 class PlayerShinobi : public PlayerBase
 {
 public:
-    PlayerShinobi(const core::AssetManager &assets, const state::App &state);
+    PlayerShinobi(const core::AssetManager &assets, const state::App &state, size_t id);
     ~PlayerShinobi() override = default;
 
 public:

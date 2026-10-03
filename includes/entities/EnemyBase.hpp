@@ -8,10 +8,11 @@ namespace entity
 class EnemyBase : public Entity
 {
 public:
+    EnemyBase(size_t id);
     ~EnemyBase() override = default;
 
 public:
-    void Update(state::App &state, float elapsed_time) override;
+    void MakeNextPlan(state::App &state, float elapsed_time) override;
 };
 
 } // namespace entity

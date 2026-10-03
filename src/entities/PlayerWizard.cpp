@@ -4,8 +4,8 @@
 
 using namespace entity;
 
-PlayerWizard::PlayerWizard(const core::AssetManager &assets, const state::App &state)
-    : PlayerBase(enums::CharacterType::WIZARD)
+PlayerWizard::PlayerWizard(const core::AssetManager &assets, const state::App &state, size_t id)
+    : PlayerBase(enums::CharacterType::WIZARD, id)
 {
     health = max_health = 200.0f;
     animator = *assets.wizard_animator;

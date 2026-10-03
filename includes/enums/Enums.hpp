@@ -24,6 +24,20 @@ enum class EnemyType : uint8_t
     MAX,
 };
 
+enum class EffectType : uint8_t
+{
+    FIREBALL,
+    MAX,
+};
+
+enum class TargetType : uint8_t
+{
+    PLAYER,
+    ENEMY,
+    EFFECT,
+    MAX,
+};
+
 enum class Level : uint8_t
 {
     TUTORIAL,

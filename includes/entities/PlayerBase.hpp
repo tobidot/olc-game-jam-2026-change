@@ -12,7 +12,7 @@ public:
     enums::CharacterType type;
 
 public:
-    explicit PlayerBase(enums::CharacterType type);
+    explicit PlayerBase(enums::CharacterType type, size_t id);
     PlayerBase(const PlayerBase &cpy) = delete;
     PlayerBase(PlayerBase &&cpy) = delete;
     ~PlayerBase() override = default;
@@ -21,10 +21,10 @@ public:
 
 public:
     void Update(state::App &state, float elapsed_time) override;
+    void MakeNextPlan(state::App &state, float elapsed_time) override;
 
 public:
-    virtual EntityHandle FindClosestEnemyTo(state::App &state, core::Vector position);
-    virtual void DetermineNextPlan(state::App &state, float elapsed_time);
+    virtual std::shared_ptr<EntityHandle> FindClosestEnemyTo(state::App &state, core::Vector position);
 };
 
 } // namespace entity

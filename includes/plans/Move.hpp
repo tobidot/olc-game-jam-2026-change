@@ -17,6 +17,7 @@ public:
     ~Move() override = default;
 
 public:
+    void Start(state::App &state, entity::Entity &entity) override;
     void Update(state::App &state, entity::Entity &entity, float elapsed_time) override;
 };
 
