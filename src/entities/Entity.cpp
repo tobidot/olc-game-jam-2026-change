@@ -73,6 +73,8 @@ void Entity::Update(state::App &state, float elapsed_time)
     {
         is_dying = true;
         SetAnimation("die");
+
+        std::cout << "die: " << animator.GetAnimation("die").total_seconds << " : " << current_animation_time << "\n";
     }
 }
 
@@ -85,7 +87,7 @@ void Entity::OnAnimationEnd(state::App &state)
         // mark the entity as removed
         is_removed = true;
     }
-    if (is_dying)
+    else if (is_dying)
     {
         // if the entity is dying,
         // we don't want to switch to any other animation, just go for "die"

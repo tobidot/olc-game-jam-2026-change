@@ -91,7 +91,7 @@ void PlayerBase::MakeNextPlan(state::App &state, float elapsed_time)
     const auto *attack_name = "attack1";
     auto duration = 0.66f;
     auto hit_time_window =
-        animator.GetFrameWindowTime(attack_name, 4, 4) / animator.GetAnimationSpeedForDuration(attack_name, duration);
+        animator.GetFrameWindowTime(attack_name, 3, 3) / animator.GetAnimationSpeedForDuration(attack_name, duration);
     plan = std::make_unique<plan::DirectAttack>(plan::DirectAttackConfig{
         .target = enemy,
         .animation_name = attack_name,

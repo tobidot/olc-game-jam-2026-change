@@ -259,7 +259,7 @@ void AssetManager::LoadSatyr(olc::PixelGameEngine &engine)
     );
 
     auto die_animation_definition =
-        CreateSimpleAnimation(die_texture, "die", {4, 1}, {{"pivot", {0.5f, 1.0f}}}, get_default_animation_times());
+        CreateSimpleAnimation(die_texture, "die", {4, 1}, {{"pivot", {0.5f, 1.0f}}}, {1.f, 1.0f, 1.5f, 4.0f});
     // animators
     satyr_animator = CreateAnimator({
         idle_animation_definition,
@@ -385,7 +385,7 @@ void AssetManager::LoadSkeleton(olc::PixelGameEngine &engine)
     );
 
     auto die_animation_definition =
-        CreateSimpleAnimation(die_texture, "die", {4, 1}, {{"pivot", {0.5f, 1.0f}}}, get_default_animation_times());
+        CreateSimpleAnimation(die_texture, "die", {4, 1}, {{"pivot", {0.5f, 1.0f}}}, {0.5, 1.0f, 2.0f, 6.0f});
     // animators
     skeleton_animator = CreateAnimator({
         idle_animation_definition,
@@ -403,6 +403,10 @@ void AssetManager::LoadWerewolf(olc::PixelGameEngine &engine)
     const auto &walk_texture = werewolf_walk_texture = CreateImage(engine, "werewolf/Black_Werewolf/walk.png");
     const auto &attack1_texture = werewolf_attack1_texture =
         CreateImage(engine, "werewolf/Black_Werewolf/Attack_1.png");
+    const auto &attack2_texture = werewolf_attack2_texture =
+        CreateImage(engine, "werewolf/Black_Werewolf/Attack_2.png");
+    const auto &attack3_texture = werewolf_attack3_texture =
+        CreateImage(engine, "werewolf/Black_Werewolf/Attack_3.png");
     const auto &die_texture = werewolf_die_texture = CreateImage(engine, "werewolf/Black_Werewolf/Dead.png");
     // animations
     auto idle_animation_definition = CreateSimpleAnimation(
@@ -428,14 +432,30 @@ void AssetManager::LoadWerewolf(olc::PixelGameEngine &engine)
         {{"pivot", {0.5f, 1.0f}}},
         get_default_animation_times()
     );
+    auto attack2_animation_definition = CreateSimpleAnimation(
+        werewolf_attack2_texture,
+        "attack2",
+        {4, 1},
+        {{"pivot", {0.5f, 1.0f}}},
+        get_default_animation_times()
+    );
+    auto attack3_animation_definition = CreateSimpleAnimation(
+        werewolf_attack3_texture,
+        "attack3",
+        {5, 1},
+        {{"pivot", {0.5f, 1.0f}}},
+        get_default_animation_times()
+    );
 
     auto die_animation_definition =
-        CreateSimpleAnimation(die_texture, "die", {2, 1}, {{"pivot", {0.25f, 1.0f}}}, get_default_animation_times());
+        CreateSimpleAnimation(die_texture, "die", {2, 1}, {{"pivot", {0.25f, 1.0f}}}, {1.25f, 8.0f});
     // animators
     werewolf_animator = CreateAnimator({
         idle_animation_definition,
         walk_animation_defintion,
         attack1_animation_definition,
+        attack2_animation_definition,
+        attack3_animation_definition,
         die_animation_definition,
     });
 }
