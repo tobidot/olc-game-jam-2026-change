@@ -9,9 +9,6 @@
         "${workspaceFolder}/src/**",
         "${workspaceFolder}/src/*"
     ],
-    "C_Cpp.default.defines": [
-        "_Float128=__float128"
-    ],
     "C_Cpp.codeAnalysis.exclude": {
         "**/olcPixelGameEngine*": true
     },
@@ -30,8 +27,7 @@
     "C_Cpp.codeAnalysis.clangTidy.enabled": true,
     "C_Cpp.codeAnalysis.clangTidy.useBuildPath": true,
     "C_Cpp.codeAnalysis.clangTidy.args": [
-        "--extra-arg=-isystem/usr/lib/gcc/x86_64-linux-gnu/13/include",
-        "--extra-arg=-D_Float128=__float128",
+        "--extra-arg=-isystem/usr/lib/llvm-20/lib/clang/20/include",
         "--exclude-header-filter=((.*\/olc\/.*)|(.*olcPixelGameEngine.*))"
     ],
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"

@@ -29,8 +29,7 @@ CheckOptions:
   readability-identifier-naming.NamespaceCase: lower_case
   readability-identifier-naming.ClassCase: CamelCase
   readability-identifier-naming.StructCase: CamelCase
+  readability-identifier-length.IgnoredParameterNames: '^(id)$'
+  readability-identifier-length.IgnoredVariableNames: '^(t)$'
   cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor: true
-  readability-identifier-length.IgnoredVariableNames: >
-    t
-    id
 ...
