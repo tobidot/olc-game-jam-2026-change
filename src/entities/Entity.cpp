@@ -10,6 +10,7 @@ using namespace entity;
 Entity::Entity(size_t id, enums::TargetType type) : plan(nullptr), id(id), target_type(type)
 {
     damage_animation_time = damage_animation_duration;
+    heal_animation_time = heal_animation_duration;
     shape = core::Polygon{.points = {}, .size = {10.f, 10.f}};
 }
 
@@ -31,6 +32,10 @@ void Entity::Update(state::App &state, float elapsed_time)
     if (damage_animation_time < damage_animation_duration)
     {
         damage_animation_time += elapsed_time;
+    }
+    if (heal_animation_time < heal_animation_duration)
+    {
+        heal_animation_time += elapsed_time;
     }
 
     if (is_dying)
@@ -59,6 +64,7 @@ void Entity::Update(state::App &state, float elapsed_time)
         }
         {
             plan_cooldown -= elapsed_time;
+            SetNextAnimation("idle");
         }
     }
 
@@ -153,6 +159,12 @@ void Entity::Damage(float amount)
 {
     health -= amount;
     damage_animation_time = 0;
+}
+
+void Entity::Heal(float amount)
+{
+    health = std::min(max_health, health + amount);
+    heal_animation_time = 0;
 }
 
 void Entity::MakeNextPlan(state::App &state, float elapsed_time)

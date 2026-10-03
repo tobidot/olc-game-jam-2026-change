@@ -1,6 +1,8 @@
 #include "entities/EnemyMinotaur.hpp"
 
+#include "helper.hpp"
 #include "plans/DirectAttack.hpp"
+#include "plans/Heal.hpp"
 #include "plans/Move.hpp"
 
 using namespace entity;
@@ -36,10 +38,26 @@ void EnemyMinotaur::MakeNextPlan(state::App &state, float elapsed_time)
                 .hit_frame = 4,
                 .duration = 1.5f,
                 .max_range = attack_range * 1.5f,
-                .damage = 20.0f,
+                .damage = 18.0f,
             }
         ));
         SetPlan(state, std::move(plan), 0.75f);
+    }
+    else if (health < max_health * 0.6f)
+    {
+        auto self = state.game_world.FindEntityHandle(id);
+        auto duration = 0.5f;
+        auto heal_time_window =
+            animator.GetFrameWindowTime("idle", 3, 3) / animator.GetAnimationSpeedForDuration("idle", duration);
+
+        plan = std::make_unique<plan::Heal>(plan::HealConfig{
+            .target = self,
+            .animation_name = "idle",
+            .heal_time_window = heal_time_window,
+            .duration = duration,
+            .amount = 35.0f,
+        });
+        SetPlan(state, std::move(plan), 0.5f);
     }
     else
     {

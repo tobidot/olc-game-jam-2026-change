@@ -210,12 +210,23 @@ void AssetManager::LoadMinotaur(olc::PixelGameEngine &engine)
         minotaur_attack1_texture,
         "attack1",
         {5, 1},
-        {{"pivot", {0.25f, 1.0f}}},
+        {{"pivot", {0.5f, 1.0f}}},
         get_default_animation_times()
     );
 
-    auto die_animation_definition =
-        CreateSimpleAnimation(die_texture, "die", {5, 1}, {{"pivot", {0.25f, 1.0f}}}, get_default_animation_times());
+    auto die_animation_definition = CreateSimpleAnimation(
+        die_texture,
+        "die",
+        {5, 1},
+        {{"pivot", {0.25f, 1.0f}}},
+        {
+            0.5f,
+            0.125f,
+            0.125f,
+            0.125f,
+            0.125f,
+        }
+    );
     // animators
     minotaur_animator = CreateAnimator({
         idle_animation_definition,

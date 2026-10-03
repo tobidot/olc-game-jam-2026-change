@@ -44,7 +44,23 @@ std::shared_ptr<EntityHandle> PlayerBase::FindClosestEnemyTo(state::App &state, 
 void PlayerBase::MakeNextPlan(state::App &state, float elapsed_time)
 {
     auto player = state.game_world.player_entity;
-    auto enemy = FindClosestEnemyTo(state, player->ref->position);
+
+    auto enemy = [&]()
+    {
+        if (last_attack_target && last_attack_target->ref)
+        {
+            if (last_attack_target->ref->is_removed)
+            {
+                last_attack_target = std::shared_ptr<entity::EntityHandle>(nullptr);
+            }
+            else if (!last_attack_target->ref->is_dying)
+            {
+                return last_attack_target;
+            }
+        }
+
+        return FindClosestEnemyTo(state, position);
+    }();
 
     if (!enemy)
     {
@@ -82,6 +98,7 @@ void PlayerBase::MakeNextPlan(state::App &state, float elapsed_time)
             .damage = 40.0f,
         }
     ));
+    last_attack_target = enemy;
     // after attackin add a second of delay
     SetPlan(state, std::move(plan), 1.75f);
 }

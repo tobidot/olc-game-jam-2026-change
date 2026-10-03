@@ -71,6 +71,7 @@ std::shared_ptr<entity::EntityHandle> EntityService::SpawnEnemy(enums::EnemyType
     auto random = (static_cast<float>(rand()) / static_cast<float>(std::numeric_limits<int>::max()));
     auto spawn_y = state->settings.screen_size.y * random;
     entity->position = {spawn_x, spawn_y};
+    entity->is_flipped = true;
 
     assets->sfx_select->Play();
 

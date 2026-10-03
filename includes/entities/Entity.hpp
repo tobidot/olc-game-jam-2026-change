@@ -44,8 +44,11 @@ public:
     core::Animator animator;
     float plan_cooldown = 0.0f;
     std::unique_ptr<plan::BasePlan> plan;
+    std::shared_ptr<entity::EntityHandle> last_attack_target;
     float damage_animation_time = 0.0f;
-    float damage_animation_duration = 0.5f;
+    float damage_animation_duration = 0.16f;
+    float heal_animation_time = 0.0f;
+    float heal_animation_duration = 0.5f;
 
 public:
     explicit Entity(size_t id, enums::TargetType type);
@@ -60,6 +63,7 @@ public:
     [[nodiscard]]
     virtual olc::ImageRegion GetImage() const;
     virtual void Damage(float amount);
+    virtual void Heal(float amount);
     virtual void OnAnimationEnd(state::App &state);
     virtual void MakeNextPlan(state::App &state, float elapsed_time);
     void SetAnimation(const std::string &name);
