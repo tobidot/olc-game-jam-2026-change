@@ -28,19 +28,18 @@ void EnemyMinotaur::MakeNextPlan(state::App &state, float elapsed_time)
 
     if (distance < attack_range)
     {
-        auto self = state.game_world.FindEntityHandle(id);
-
-        plan = std::make_unique<plan::DirectAttack>(plan::DirectAttack::FromAnimationFrame(
-            plan::DirectAttackFromAnimationFrameConfig{
-                .source = self,
-                .target = state.game_world.player_entity,
-                .animation_name = "attack1",
-                .hit_frame = 4,
-                .duration = 1.5f,
-                .max_range = attack_range * 1.5f,
-                .damage = 18.0f,
-            }
-        ));
+        const auto *attack_name = "attack1";
+        auto duration = 1.5f;
+        auto hit_time_window = animator.GetFrameWindowTime(attack_name, 4, 4) /
+                               animator.GetAnimationSpeedForDuration(attack_name, duration);
+        plan = std::make_unique<plan::DirectAttack>(plan::DirectAttackConfig{
+            .target = state.game_world.player_entity,
+            .animation_name = attack_name,
+            .hit_time_window = hit_time_window,
+            .duration = duration,
+            .max_range = attack_range * 1.5f,
+            .damage = 18.0f,
+        });
         SetPlan(state, std::move(plan), 0.75f);
     }
     else if (health < max_health * 0.6f)

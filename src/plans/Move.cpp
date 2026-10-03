@@ -24,15 +24,18 @@ void Move::Update(state::App &state, entity::Entity &entity, float elapsed_time)
     }
 
     auto difference = target - entity.position;
-
     if (difference.mag2() > 10.0f)
     {
         entity.position += difference.norm() * elapsed_time * velocity;
         entity.is_flipped = difference.x < 0;
+
+        // check if walking against the endge
+        if (!state.game_world.boundaries.Contains(entity.position) && !state.game_world.boundaries.Contains(target))
+        {
+            is_finished = true;
+        }
+        return;
     }
-    else
-    {
-        is_finished = true;
-        entity.SetAnimation("idle");
-    }
+
+    is_finished = true;
 }

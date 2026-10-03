@@ -23,8 +23,11 @@ void Chase::Update(state::App &state, entity::Entity &entity, float elapsed_time
         return;
     }
 
-    auto difference_height = target->ref->GetCurrentAnchorPixelOffset("body").y - entity.z_offset;
-    entity.z_offset += difference_height / 100.0f;
+    if (entity.can_fly)
+    {
+        auto difference_height = target->ref->GetCurrentAnchorPixelOffset("body").y - entity.z_offset;
+        entity.z_offset += difference_height / 100.0f;
+    }
 
     auto difference = target->ref->position - entity.position;
     auto touching_distance = target->ref->shape.size.mag() + entity.shape.size.mag();

@@ -1,6 +1,7 @@
 #include "entities/PlayerBase.hpp"
 
 #include "enums/Enums.hpp"
+#include "helper.hpp"
 #include "plans/DirectAttack.hpp"
 #include "plans/Move.hpp"
 
@@ -73,10 +74,11 @@ void PlayerBase::MakeNextPlan(state::App &state, float elapsed_time)
         return;
     }
 
+    auto attack_range = 60.0f;
     auto difference = enemy->ref->position - player->ref->position;
     auto distance = difference.mag();
 
-    if (distance > 60.0f)
+    if (distance > attack_range)
     {
         // move towards the enemy
         auto target = player->ref->position + difference.norm() * std::min(25.0f, distance);
@@ -86,19 +88,19 @@ void PlayerBase::MakeNextPlan(state::App &state, float elapsed_time)
         return;
     }
 
-    //
-    plan = std::make_unique<plan::DirectAttack>(plan::DirectAttack::FromAnimationFrame(
-        plan::DirectAttackFromAnimationFrameConfig{
-            .source = player,
-            .target = enemy,
-            .animation_name = "attack1",
-            .hit_frame = 4,
-            .duration = 0.66f,
-            .max_range = 125.0f,
-            .damage = 40.0f,
-        }
-    ));
-    last_attack_target = enemy;
-    // after attackin add a second of delay
-    SetPlan(state, std::move(plan), 1.75f);
+    const auto *attack_name = "attack1";
+    auto duration = 0.66f;
+    auto hit_time_window =
+        animator.GetFrameWindowTime(attack_name, 4, 4) / animator.GetAnimationSpeedForDuration(attack_name, duration);
+    plan = std::make_unique<plan::DirectAttack>(plan::DirectAttackConfig{
+        .target = enemy,
+        .animation_name = attack_name,
+        .hit_time_window = hit_time_window,
+        .duration = duration,
+        .max_range = attack_range * 1.5f,
+        .damage = 40.0f,
+    });
+    SetPlan(state, std::move(plan), 1.35f);
+
+    last_attack_target = std::move(enemy);
 }

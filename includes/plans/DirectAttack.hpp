@@ -12,19 +12,7 @@ struct DirectAttackConfig
 {
     std::shared_ptr<entity::EntityHandle> target;
     std::string animation_name;
-    float hit_time;
-    float hit_time_window;
-    float duration;
-    float max_range;
-    float damage;
-};
-
-struct DirectAttackFromAnimationFrameConfig
-{
-    std::shared_ptr<entity::EntityHandle> source;
-    std::shared_ptr<entity::EntityHandle> target;
-    std::string animation_name;
-    size_t hit_frame;
+    std::pair<float, float> hit_time_window;
     float duration;
     float max_range;
     float damage;
@@ -33,21 +21,20 @@ struct DirectAttackFromAnimationFrameConfig
 class DirectAttack : public BasePlan
 {
 public:
+    float time = 0.f;
+    bool has_hit = false;
+
+public:
     std::shared_ptr<entity::EntityHandle> target;
     std::string animation_name;
-    float time = 0.f;
-    float hit_time = 0.f;
-    float hit_time_window = 0.f;
-    float duration = 0.f;
-    float max_range = 100.0f;
-    float damage = 10.0f;
-    bool has_hit = false;
+    std::pair<float, float> hit_time_window;
+    float duration;
+    float max_range;
+    float damage;
 
 public:
     explicit DirectAttack(const DirectAttackConfig &config);
     ~DirectAttack() override = default;
-
-    static DirectAttack FromAnimationFrame(const DirectAttackFromAnimationFrameConfig &config);
 
 public:
     void Start(state::App &state, entity::Entity &entity) override;

@@ -177,7 +177,7 @@ void GameWorld::HandleWorldBounds(state::App &state, entity::Entity &entity, flo
 
     entity.position.x = std::max(bounds.left, entity.position.x);
     entity.position.x = std::min(bounds.right, entity.position.x);
-    entity.position.y = std::max(bounds.left, entity.position.y);
+    entity.position.y = std::max(bounds.top, entity.position.y);
     entity.position.y = std::min(bounds.bottom, entity.position.y);
 }
 

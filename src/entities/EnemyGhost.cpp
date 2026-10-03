@@ -1,5 +1,6 @@
 #include "entities/EnemyGhost.hpp"
 
+#include "helper.hpp"
 #include "plans/BasePlan.hpp"
 #include "plans/DirectAttack.hpp"
 #include "plans/Move.hpp"
@@ -15,6 +16,7 @@ EnemyGhost::EnemyGhost(const core::AssetManager &assets, const state::App &state
     z_offset = 15.0f;
     current_animation = "walk";
     current_animation_time = 0.0f;
+    can_fly = true;
 }
 
 /**
@@ -28,19 +30,18 @@ void EnemyGhost::MakeNextPlan(state::App &state, float elapsed_time)
 
     if (distance < attack_range)
     {
-        auto self = state.game_world.FindEntityHandle(id);
-        plan = std::make_unique<plan::DirectAttack>(plan::DirectAttack::FromAnimationFrame(
-            plan::DirectAttackFromAnimationFrameConfig{
-                .source = self,
-                .target = state.game_world.player_entity,
-                .animation_name = "attack1",
-                .hit_frame = 4,
-                .duration = 0.5f,
-                .max_range = attack_range * 1.5f,
-                .damage = 7.0f,
-            }
-        ));
-        // after attackin add a second of delay
+        const auto *attack_name = "attack1";
+        auto duration = 0.5f;
+        auto hit_time_window = animator.GetFrameWindowTime(attack_name, 4, 4) /
+                               animator.GetAnimationSpeedForDuration(attack_name, duration);
+        plan = std::make_unique<plan::DirectAttack>(plan::DirectAttackConfig{
+            .target = state.game_world.player_entity,
+            .animation_name = attack_name,
+            .hit_time_window = hit_time_window,
+            .duration = duration,
+            .max_range = attack_range * 1.5f,
+            .damage = 7.0f,
+        });
         SetPlan(state, std::move(plan), 0.5f);
     }
     else

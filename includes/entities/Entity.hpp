@@ -30,6 +30,9 @@ public:
     bool is_flipped = false;
 
 public:
+    bool can_fly = false;
+
+public:
     enums::TargetType target_type;
     float health = 50.0f;
     float max_health = 100.0f;

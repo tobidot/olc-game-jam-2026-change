@@ -1,5 +1,6 @@
 #include "entities/EnemySkeleton.hpp"
 
+#include "plans/Chase.hpp"
 #include "plans/DirectAttack.hpp"
 #include "plans/Move.hpp"
 
@@ -20,8 +21,10 @@ EnemySkeleton::EnemySkeleton(const core::AssetManager &assets, const state::App 
  */
 void EnemySkeleton::MakeNextPlan(state::App &state, float elapsed_time)
 {
-    const auto attack_range = 45.0f;
-    auto difference = state.game_world.player_entity->ref->position - position;
+    const auto attack_range = 65.0f;
+    const auto chase_range = 100.0f;
+    const auto &player = state.game_world.player_entity;
+    auto difference = player->ref->position - position;
     auto distance = difference.mag();
 
     if (distance < attack_range)
@@ -53,23 +56,28 @@ void EnemySkeleton::MakeNextPlan(state::App &state, float elapsed_time)
         }
 
         auto self = state.game_world.FindEntityHandle(id);
-        plan = std::make_unique<plan::DirectAttack>(plan::DirectAttack::FromAnimationFrame(
-            plan::DirectAttackFromAnimationFrameConfig{
-                .source = self,
-                .target = state.game_world.player_entity,
-                .animation_name = attack_name,
-                .hit_frame = attack_frame,
-                .duration = 1.2f,
-                .max_range = attack_range * 1.5f,
-                .damage = 10.0f,
-            }
-        ));
+        auto hit_time_window = animator.GetFrameWindowTime(attack_name, attack_frame, attack_frame);
+        plan = std::make_unique<plan::DirectAttack>(plan::DirectAttackConfig{
+            .target = state.game_world.player_entity,
+            .animation_name = attack_name,
+            .hit_time_window = hit_time_window,
+            .duration = 1.2f,
+            .max_range = attack_range * 1.5f,
+            .damage = 10.0f,
+        });
         SetPlan(state, std::move(plan), 0.25f);
+    }
+    else if (distance < chase_range)
+    {
+        auto new_plan = std::make_unique<plan::Chase>(player, 35.0f);
+        SetPlan(state, std::move(new_plan), .25f);
     }
     else
     {
-        auto target = position + difference.norm() * std::min(75.0f, difference.mag());
+        auto offset_x = static_cast<float>((rand() % 100) - 50);
+        auto offset_y = static_cast<float>((rand() % 100) - 50);
+        auto target = position + core::Vector{offset_x, offset_y};
         auto new_plan = std::make_unique<plan::Move>(core::Vector(target), 35.f);
-        SetPlan(state, std::move(new_plan), .0f);
+        SetPlan(state, std::move(new_plan), .8f);
     }
 }
