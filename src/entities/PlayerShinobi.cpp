@@ -14,7 +14,7 @@ PlayerShinobi::PlayerShinobi(const core::AssetManager &assets, const state::App 
 {
     health = max_health = 200.0f;
     animator = *assets.shinobi_animator;
-    scale = {1.f, 1.f};
+    scale = {.8f, .8f};
     current_animation = "walk";
     current_animation_time = 0.0f;
 }
@@ -30,7 +30,7 @@ void PlayerShinobi::MakeNextPlan(state::App &state, float elapsed_time)
     // chose enemies with the lowest health
     auto enemy = GetCurrentTarget(
         state,
-        [](const auto &entity) { return true; },
+        PlayerBase::FilterByDistance(position, 200.f),
         [](const auto &entity) { return entity.health; }
     );
     auto movement_speed = 60.0f;
@@ -51,27 +51,28 @@ void PlayerShinobi::MakeNextPlan(state::App &state, float elapsed_time)
     auto difference = enemy->ref->position - player->ref->position;
     auto distance = difference.mag();
     auto min_teleport_range = 60.0f;
-    auto max_teleport_range = 250.0f;
+    auto max_teleport_range = 175.0f;
 
     if (distance > attack_range)
     {
 
         if (distance > min_teleport_range && distance < max_teleport_range)
         {
+            std::cout << "tele " << distance << "\n";
             // teleport in a certain distance
             const auto *animation_name = "hurt";
             const auto duration = 0.2f;
             const auto animation_speed = animator.GetAnimationSpeedForDuration(animation_name, duration);
             const auto effect_time_window = animator.GetFrameWindowTime(animation_name, 0, 0) / animation_speed;
-            std::cout << "plan tele " << __LINE__ << "\n";
             plan = std::make_unique<plan::Teleport>(plan::TeleportConfig{
                 .animation_name = animation_name,
                 .target = enemy,
                 .effect_time_window = effect_time_window,
                 .duration = duration,
             });
-            std::cout << "plan tele " << __LINE__ << "\n";
             SetPlan(state, std::move(plan), 0.1f);
+            // after tp this is my target
+            last_attack_target = std::move(enemy);
             return;
         }
 

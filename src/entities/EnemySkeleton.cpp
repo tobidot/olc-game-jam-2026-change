@@ -74,7 +74,7 @@ void EnemySkeleton::MakeNextPlan(state::App &state, float elapsed_time)
     }
     else
     {
-        auto offset_x = static_cast<float>((rand() % 100) - 50);
+        auto offset_x = static_cast<float>((rand() % 100) - 65);
         auto offset_y = static_cast<float>((rand() % 100) - 50);
         auto target = position + core::Vector{offset_x, offset_y};
         auto new_plan = std::make_unique<plan::Move>(core::Vector(target), 35.f);

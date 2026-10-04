@@ -19,9 +19,12 @@ void GameInput::PreUpdate(const olc::hw::Mouse &mouse, const olc::hw::Keyboard &
     if (keyboard.GetKey(olc::Key::SPACE).bPressed)
     {
         switchCharacter = true;
-        std::cout << "switch cahar" << "\n";
     }
 
+    if (keyboard.GetKey(olc::Key::F1).bPressed)
+    {
+        cheatMode = !cheatMode;
+    }
     if (keyboard.GetKey(olc::Key::Q).bPressed)
     {
         cheatSpawnEnemy = true;

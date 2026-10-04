@@ -52,16 +52,21 @@ void GameWorld::Update(const core::AssetManager &assets, const GameInput &input,
     // input based handling
     if (input.switchCharacter && state.game_world.player.switch_cooldown <= 0.0f)
     {
-        auto type = std::array<enums::CharacterType, 4>({
+        auto types = std::array<enums::CharacterType, 4>({
             enums::CharacterType::WIZARD,
             enums::CharacterType::KNIGHT,
             enums::CharacterType::SAMURAI,
             enums::CharacterType::SHINOBI,
         });
-        SwitchPlayerCharacterTo(assets, state, type.at(rand() % 4));
-        state.game_world.player.switch_cooldown = 10.0f;
+        auto type = types.at(rand() % 4);
+        while (type == state.game_world.player.character_type)
+        {
+            type = types.at(rand() % 4);
+        }
+        SwitchPlayerCharacterTo(assets, state, type);
+        state.game_world.player.switch_cooldown = 5.0f;
     }
-    if (input.cheatSpawnEnemy)
+    if (input.cheatMode && input.cheatSpawnEnemy)
     {
         auto type = input.cheatSpawnEnemyType;
         SpawnEnemy(assets, state, type);
@@ -72,7 +77,7 @@ void GameWorld::Update(const core::AssetManager &assets, const GameInput &input,
     if (level_progress_diff > state.settings.screen_size.x * 0.4f)
     {
         state.game_world.player.level_progress +=
-            floorf(std::max(20.0f, level_progress_diff / 5.0f) / 10.0f) * 10.0f * elapsed_time;
+            floorf(std::max(20.0f, level_progress_diff / 3.0f) / 15.0f) * 15.0f * elapsed_time;
     }
     else if (level_progress_diff > state.settings.screen_size.x * 0.15f)
     {
@@ -160,6 +165,7 @@ GameWorld::SwitchPlayerCharacterTo(const core::AssetManager &assets, state::App 
     new_character->position = old_player->ref->position;
     old_player->ref->is_removed = true;
     state.game_world.player_entity->ref = new_character;
+    state.game_world.player.character_type = type;
 
     return state.game_world.player_entity;
 }
@@ -192,19 +198,22 @@ void GameWorld::Load(const core::AssetManager &assets, state::App &state)
         .top = 0,
         .left = 0,
         .bottom = 200.f,
-        .right = 1000.f,
+        .right = 10000.f,
     };
 
     // spawn player
-    auto player_entity = std::make_shared<entity::PlayerWizard>(assets, state, state.game_world.GetNextEntityID());
+    // auto player_entity = std::make_shared<entity::PlayerWizard>(assets, state, state.game_world.GetNextEntityID());
+    auto player_entity = std::make_shared<entity::PlayerSamurai>(assets, state, state.game_world.GetNextEntityID());
+
     player_entity->position = {75.f, 125.f};
     state.game_world.player_entity = std::make_shared<entity::EntityHandle>(player_entity);
+    state.game_world.player.character_type = enums::CharacterType::WIZARD;
     state.game_world.entities.push_back(state.game_world.player_entity);
 
     auto &level = state.game_world.level = state::Level();
     level.events = {
         state::LevelEvent{
-            .at_progress = 25.0f,
+            .at_progress = 5.0f,
             .spawns =
                 {
                     enums::EnemyType::SKELETON,
@@ -212,42 +221,41 @@ void GameWorld::Load(const core::AssetManager &assets, state::App &state)
                 },
             .new_spawn_rate =
                 state::LevelSpawnRate{
-                    .total_time = 4.0f,
+                    .total_time = 10.0f,
                     .spawns =
                         {
-                            std::pair{2.f, enums::EnemyType::SKELETON},
+                            std::pair{9.f, enums::EnemyType::SKELETON},
                         },
                 },
         },
         state::LevelEvent{
-            .at_progress = 200.0f,
+            .at_progress = 350.0f,
             .spawns = {enums::EnemyType::SATYR},
             .new_spawn_rate =
                 state::LevelSpawnRate{
-                    .total_time = 10.0f,
+                    .total_time = 30.0f,
                     .spawns =
                         {
-                            std::pair{3.f, enums::EnemyType::SKELETON},
-                            std::pair{8.f, enums::EnemyType::SATYR},
-                            std::pair{8.f, enums::EnemyType::SATYR},
+                            std::pair{4.f, enums::EnemyType::SKELETON},
+                            std::pair{20.f, enums::EnemyType::SATYR},
+                            std::pair{20.f, enums::EnemyType::SATYR},
                         },
                 },
         },
         state::LevelEvent{
-            .at_progress = 400.0f,
+            .at_progress = 850.0f,
             .spawns = {enums::EnemyType::MINOTAUR},
             .new_spawn_rate =
                 state::LevelSpawnRate{
-                    .total_time = 10.0f,
+                    .total_time = 15.0f,
                     .spawns =
                         {
-                            std::pair{2.f, enums::EnemyType::MINOTAUR},
-                            std::pair{7.f, enums::EnemyType::MINOTAUR},
+                            std::pair{9.f, enums::EnemyType::MINOTAUR},
                         },
                 },
         },
         state::LevelEvent{
-            .at_progress = 500.0f,
+            .at_progress = 1000.0f,
             .spawns = {},
             .new_spawn_rate =
                 state::LevelSpawnRate{
@@ -256,25 +264,54 @@ void GameWorld::Load(const core::AssetManager &assets, state::App &state)
                 },
         },
         state::LevelEvent{
-            .at_progress = 600.0f,
+            .at_progress = 1200.0f,
             .spawns = {enums::EnemyType::VAMPIRE, enums::EnemyType::VAMPIRE, enums::EnemyType::VAMPIRE},
             .new_spawn_rate =
                 state::LevelSpawnRate{
-                    .total_time = 15.0f,
+                    .total_time = 20.0f,
                     .spawns =
                         {
-                            std::pair{10.f, enums::EnemyType::SKELETON},
-                            std::pair{10.f, enums::EnemyType::VAMPIRE},
+                            std::pair{19.f, enums::EnemyType::VAMPIRE},
+                            std::pair{19.f, enums::EnemyType::SKELETON},
                         },
                 },
         },
         state::LevelEvent{
-            .at_progress = 800.0f,
+            .at_progress = 2000.0f,
             .spawns = {enums::EnemyType::WEREWOLF},
+            .new_spawn_rate =
+                state::LevelSpawnRate{
+                    .total_time = 8.0f,
+                    .spawns =
+                        {
+                            std::pair{1.f, enums::EnemyType::WEREWOLF},
+                        },
+                },
+        },
+        state::LevelEvent{
+            .at_progress = 2300.0f,
+            .spawns = {},
+            .new_spawn_rate =
+                state::LevelSpawnRate{
+                    .total_time = 10.0f,
+                    .spawns = {},
+                },
+        },
+        state::LevelEvent{
+            .at_progress = 2500.0f,
+            .spawns = {},
             .new_spawn_rate = state::LevelSpawnRate{
-                .total_time = 5.0f,
+                .total_time = 30.0f,
                 .spawns = {
-                    std::pair{1.f, enums::EnemyType::WEREWOLF},
+                    std::pair{4.f, enums::EnemyType::GHOST},
+                    std::pair{5.f, enums::EnemyType::GHOST},
+                    std::pair{5.f, enums::EnemyType::GHOST},
+                    std::pair{7.f, enums::EnemyType::GHOST},
+                    std::pair{16.f, enums::EnemyType::GHOST},
+                    std::pair{16.f, enums::EnemyType::GHOST},
+                    std::pair{18.f, enums::EnemyType::GHOST},
+                    std::pair{20.f, enums::EnemyType::GHOST},
+                    std::pair{28.f, enums::EnemyType::GHOST},
                 },
             },
         },

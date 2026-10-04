@@ -28,10 +28,14 @@ void EffectPiercingLight::Update(state::App &state, float elapsed_time)
 {
     Effect::Update(state, elapsed_time);
 
-    const auto enemies = service::root()->entities->Pick(position, 25.f, {enums::TargetType::ENEMY});
+    const auto enemies = service::root()->entities->Pick(position, 35.f, {enums::TargetType::ENEMY});
 
     for (const auto &enemy : enemies)
     {
+        if (!enemy->ref || enemy->ref->is_dying || enemy->ref->is_removed)
+        {
+            continue;
+        }
         const bool has_hit = has_hit_enemies.contains(enemy->ref->id);
         if (!has_hit)
         {

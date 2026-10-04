@@ -69,7 +69,10 @@ std::shared_ptr<entity::EntityHandle> EntityService::SpawnEnemy(enums::EnemyType
     }
 
     // spawn at the right border of the screen
-    auto spawn_x = state->game_world.player.level_progress + state->settings.screen_size.x;
+    auto spawn_x = std::max(
+        state->game_world.player.level_progress + state->settings.screen_size.x,
+        state->game_world.player_entity->ref->position.x + state->settings.screen_size.x
+    );
     auto random = (static_cast<float>(rand()) / static_cast<float>(std::numeric_limits<int>::max()));
     auto spawn_y = state->settings.screen_size.y * random;
     entity->position = {spawn_x, spawn_y};
@@ -130,17 +133,17 @@ std::vector<std::shared_ptr<entity::EntityHandle>> EntityService::Pick(
     for (const auto &entity : state->game_world.entities)
     {
         auto target_type = entity->ref->target_type;
-        auto is_all_valid_target = target_types.empty();
+        auto is_any_target_valid = target_types.empty();
         auto is_valid_target = std::ranges::find_if(
                                    target_types,
                                    [target_type](const enums::TargetType &current_target_type)
                                    { return current_target_type == target_type; }
                                ) != target_types.end();
-        if (is_all_valid_target || is_valid_target)
+        if (is_any_target_valid || is_valid_target)
         {
             auto current_distance = (entity->ref->position - center).mag();
             auto entity_radius = entity->ref->shape.size.mag() / 2.f;
-            if (current_distance <= distance + entity_radius)
+            if (current_distance - entity_radius <= distance)
             {
                 buffer.push_back(entity);
             }

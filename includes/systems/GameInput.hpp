@@ -10,6 +10,7 @@ public:
     bool requestToggleFullscreen = false;
     bool switchCharacter = false;
     bool cheatSpawnEnemy = false;
+    bool cheatMode = false;
     enums::EnemyType cheatSpawnEnemyType = enums::EnemyType::GHOST;
 
 public:

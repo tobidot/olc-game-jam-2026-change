@@ -35,7 +35,7 @@ void PlayerWizard::MakeNextPlan(state::App &state, float elapsed_time)
     auto player = state.game_world.player_entity;
     auto enemy = GetCurrentTarget(
         state,
-        PlayerBase::FilterByDistance(player->ref->position, 350.f),
+        PlayerBase::FilterByDistance(player->ref->position, 325.f),
         PlayerBase::OrderByDistanceAsc(player->ref->position)
     );
     auto movement_speed = 35.0f;

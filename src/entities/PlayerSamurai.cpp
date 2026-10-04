@@ -48,7 +48,7 @@ void PlayerSamurai::MakeNextPlan(state::App &state, float elapsed_time)
 
     auto duration = 1.2f;
     auto cooldown = 1.5f;
-    auto attack_range = 70.0f;
+    auto attack_range = 60.0f;
     auto area = 45.0f;
     auto damage = 35.0f;
     auto difference = enemy->ref->position - player->ref->position;

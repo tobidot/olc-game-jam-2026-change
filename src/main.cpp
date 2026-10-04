@@ -85,7 +85,7 @@ public:
     {
         try
         {
-            elapsed_time = std::min(1.0f, std::max(0.0f, elapsed_time));
+            elapsed_time = std::min(0.1f, std::max(0.01f, elapsed_time));
 
             game_input->PreUpdate(mouse, keyboard, elapsed_time);
             renderer->Draw(draw, *asset_manager, *app_state);

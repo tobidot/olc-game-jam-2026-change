@@ -73,8 +73,6 @@ void Entity::Update(state::App &state, float elapsed_time)
     {
         is_dying = true;
         SetAnimation("die");
-
-        std::cout << "die: " << animator.GetAnimation("die").total_seconds << " : " << current_animation_time << "\n";
     }
 }
 

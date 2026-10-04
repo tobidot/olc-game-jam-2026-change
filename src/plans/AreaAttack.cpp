@@ -9,7 +9,7 @@ using namespace plan;
 
 AreaAttack::AreaAttack(const AreaAttackConfig &config)
     : animation_name(config.animation_name), duration(config.duration), hit_time_window(config.hit_time_window),
-      source(config.source), targets(config.targets), damage(config.damage), target(config.target), area(area)
+      source(config.source), targets(config.targets), damage(config.damage), target(config.target), area(config.area)
 {
     name = "AreaAttack";
 }
