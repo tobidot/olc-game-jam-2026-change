@@ -40,7 +40,10 @@ void AreaAttack::Update(state::App &state, entity::Entity &entity, float elapsed
         }
         has_hit = true;
 
-        service::root()->sounds->Play(*sfx_hit);
+        if (sfx_hit)
+        {
+            service::root()->sounds->Play(*sfx_hit);
+        }
     }
 
     time += elapsed_time;

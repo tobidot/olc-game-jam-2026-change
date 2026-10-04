@@ -135,19 +135,19 @@ void AssetManager::LoadSwarpSound(olc::ext::Miniaudio::AudioEngine &audio)
 void AssetManager::LoadKnightAttackSound(olc::ext::Miniaudio::AudioEngine &audio)
 {
     sfx_knight_attack = std::make_shared<olc::ext::Miniaudio::Sound>();
-    audio.CreateSoundFromFile(*sfx_knight_attack, "assets/sfx/knight_attack.wav");
+    audio.CreateSoundFromFile(*sfx_knight_attack, "assets/sfx/knight-attack.wav");
 }
 
 void AssetManager::LoadSamuraiAttackSound(olc::ext::Miniaudio::AudioEngine &audio)
 {
     sfx_samurai_attack = std::make_shared<olc::ext::Miniaudio::Sound>();
-    audio.CreateSoundFromFile(*sfx_samurai_attack, "assets/sfx/samurai_attack.wav");
+    audio.CreateSoundFromFile(*sfx_samurai_attack, "assets/sfx/samurai-attack.wav");
 }
 
 void AssetManager::LoadShinobiAttackSound(olc::ext::Miniaudio::AudioEngine &audio)
 {
     sfx_shinobi_attack = std::make_shared<olc::ext::Miniaudio::Sound>();
-    audio.CreateSoundFromFile(*sfx_shinobi_attack, "assets/sfx/shinobi_attack.wav");
+    audio.CreateSoundFromFile(*sfx_shinobi_attack, "assets/sfx/shinobi-attack.wav");
 }
 
 void AssetManager::LoadKnight(olc::PixelGameEngine &engine)

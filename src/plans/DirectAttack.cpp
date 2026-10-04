@@ -46,7 +46,10 @@ void DirectAttack::Update(state::App &state, entity::Entity &entity, float elaps
             target->ref->Damage(damage);
             has_hit = true;
 
-            service::root()->sounds->Play(*sfx_hit);
+            if (sfx_hit)
+            {
+                service::root()->sounds->Play(*sfx_hit);
+            }
         }
     }
     entity.is_flipped = (difference.x < 0);
