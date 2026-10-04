@@ -47,24 +47,24 @@ void GameWorld::Update(const core::AssetManager &assets, const GameInput &input,
     auto current_entity_level_progress =
         floorf(state.game_world.player_entity->ref->position.x / progress_steps) * progress_steps;
     auto level_progress_diff = current_entity_level_progress - old_level_progress;
-    state.game_world.player.switch_cooldown = std::max(0.f, state.game_world.player.switch_cooldown - elapsed_time);
+
+    state.game_world.player.character_slot_left_cooldown =
+        std::max(0.f, state.game_world.player.character_slot_left_cooldown - elapsed_time);
+    state.game_world.player.character_slot_right_cooldown =
+        std::max(0.f, state.game_world.player.character_slot_right_cooldown - elapsed_time);
 
     // input based handling
-    if (input.switchCharacter && state.game_world.player.switch_cooldown <= 0.0f)
+    if (input.useCharacterSlotLeft && state.game_world.player.character_slot_left_cooldown <= 0.0f)
     {
-        auto types = std::array<enums::CharacterType, 4>({
-            enums::CharacterType::WIZARD,
-            enums::CharacterType::KNIGHT,
-            enums::CharacterType::SAMURAI,
-            enums::CharacterType::SHINOBI,
-        });
-        auto type = types.at(rand() % 4);
-        while (type == state.game_world.player.character_type)
-        {
-            type = types.at(rand() % 4);
-        }
-        SwitchPlayerCharacterTo(assets, state, type);
-        state.game_world.player.switch_cooldown = 5.0f;
+        SwitchPlayerCharacterTo(assets, state, state.game_world.player.character_slot_left);
+        state.game_world.player.character_slot_left = GetRandomCharacterType();
+        state.game_world.player.character_slot_left_cooldown = state::Player::CHARACTER_SLOT_MAX_COOLDOWN;
+    }
+    if (input.useCharacterSlotRight && state.game_world.player.character_slot_right_cooldown <= 0.0f)
+    {
+        SwitchPlayerCharacterTo(assets, state, state.game_world.player.character_slot_right);
+        state.game_world.player.character_slot_right = GetRandomCharacterType();
+        state.game_world.player.character_slot_right_cooldown = state::Player::CHARACTER_SLOT_MAX_COOLDOWN;
     }
     if (input.cheatMode && input.cheatSpawnEnemy)
     {
@@ -124,6 +124,17 @@ void GameWorld::Update(const core::AssetManager &assets, const GameInput &input,
     {
         state.game_world.entities.erase(entity);
     }
+}
+
+enums::CharacterType GameWorld::GetRandomCharacterType() const
+{
+    auto types = std::array<enums::CharacterType, 4>({
+        enums::CharacterType::WIZARD,
+        enums::CharacterType::KNIGHT,
+        enums::CharacterType::SAMURAI,
+        enums::CharacterType::SHINOBI,
+    });
+    return types.at(rand() % 4);
 }
 
 std::shared_ptr<entity::EntityHandle>
@@ -193,6 +204,7 @@ void GameWorld::HandleWorldBounds(state::App &state, entity::Entity &entity, flo
 
 void GameWorld::Load(const core::AssetManager &assets, state::App &state)
 {
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
     state.game_world.render_offset_top = 100.0f;
     state.game_world.boundaries = {
         .top = 0,
@@ -202,12 +214,13 @@ void GameWorld::Load(const core::AssetManager &assets, state::App &state)
     };
 
     // spawn player
-    // auto player_entity = std::make_shared<entity::PlayerWizard>(assets, state, state.game_world.GetNextEntityID());
-    auto player_entity = std::make_shared<entity::PlayerSamurai>(assets, state, state.game_world.GetNextEntityID());
+    auto player_entity = std::make_shared<entity::PlayerWizard>(assets, state, state.game_world.GetNextEntityID());
 
     player_entity->position = {75.f, 125.f};
     state.game_world.player_entity = std::make_shared<entity::EntityHandle>(player_entity);
     state.game_world.player.character_type = enums::CharacterType::WIZARD;
+    state.game_world.player.character_slot_left = GetRandomCharacterType();
+    state.game_world.player.character_slot_right = GetRandomCharacterType();
     state.game_world.entities.push_back(state.game_world.player_entity);
 
     auto &level = state.game_world.level = state::Level();

@@ -8,7 +8,8 @@ class GameInput
 {
 public:
     bool requestToggleFullscreen = false;
-    bool switchCharacter = false;
+    bool useCharacterSlotLeft = false;
+    bool useCharacterSlotRight = false;
     bool cheatSpawnEnemy = false;
     bool cheatMode = false;
     enums::EnemyType cheatSpawnEnemyType = enums::EnemyType::GHOST;

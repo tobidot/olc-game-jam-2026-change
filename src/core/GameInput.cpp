@@ -16,9 +16,15 @@ void GameInput::PreUpdate(const olc::hw::Mouse &mouse, const olc::hw::Keyboard &
         // boost = true;
     }
 
-    if (keyboard.GetKey(olc::Key::SPACE).bPressed)
+    if (keyboard.GetKey(olc::Key::Q).bPressed || keyboard.GetKey(olc::Key::LEFT).bPressed ||
+        keyboard.GetKey(olc::Key::OEM_1).bPressed || mouse.GetButton(0).bPressed)
     {
-        switchCharacter = true;
+        useCharacterSlotLeft = true;
+    }
+    if (keyboard.GetKey(olc::Key::E).bPressed || keyboard.GetKey(olc::Key::RIGHT).bPressed ||
+        keyboard.GetKey(olc::Key::OEM_2).bPressed || mouse.GetButton(1).bPressed)
+    {
+        useCharacterSlotRight = true;
     }
 
     if (keyboard.GetKey(olc::Key::F1).bPressed)
@@ -65,7 +71,8 @@ void GameInput::PreUpdate(const olc::hw::Mouse &mouse, const olc::hw::Keyboard &
 void GameInput::PostUpdate(float fElapsedTime)
 {
     requestToggleFullscreen = false;
-    switchCharacter = false;
+    useCharacterSlotLeft = false;
+    useCharacterSlotRight = false;
     cheatSpawnEnemy = false;
     // boost = false;
 }

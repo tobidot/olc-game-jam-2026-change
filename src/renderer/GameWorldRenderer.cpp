@@ -1,6 +1,7 @@
 #include "renderer/GameWorldRenderer.hpp"
 
 #include "core/AssetManager.hpp"
+#include "helper.hpp"
 
 using namespace renderer;
 
@@ -60,13 +61,13 @@ void GameWorldRenderer::DrawEntity(
     if (entity.damage_animation_time < entity.damage_animation_duration)
     {
         auto red = olc::Colour::RED;
-        auto t = cosf(entity.damage_animation_time * M_PIf * 16.0f);
+        auto t = cosf(entity.damage_animation_time * Const::PI * 16.0f);
         tint = (red * t + tint * (1 - t));
     }
     if (entity.heal_animation_time < entity.heal_animation_duration)
     {
         auto green = olc::Colour::GREEN;
-        auto t = cosf(entity.heal_animation_time * M_PIf * 4.0f);
+        auto t = cosf(entity.heal_animation_time * Const::PI * 4.0f);
         tint = (green * t + tint * (1 - t));
     }
 

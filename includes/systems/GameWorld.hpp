@@ -31,6 +31,8 @@ public:
     SpawnEnemy(const core::AssetManager &assets, state::App &state, enums::EnemyType type);
     std::shared_ptr<entity::EntityHandle>
     SwitchPlayerCharacterTo(const core::AssetManager &assets, state::App &state, enums::CharacterType type);
+    [[nodiscard]]
+    enums::CharacterType GetRandomCharacterType() const;
 };
 
 } // namespace systems

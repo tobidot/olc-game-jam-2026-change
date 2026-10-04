@@ -23,6 +23,14 @@ target_sources(Main
 target_include_directories(Main PRIVATE includes)
 
 if(EMSCRIPTEN)
+    target_link_options(Main PRIVATE
+        "--shell-file" "${CMAKE_CURRENT_SOURCE_DIR}/src/index.html"
+    )
+    
+    set_target_properties(Main PROPERTIES 
+        OUTPUT_NAME "index"
+    )
+
     target_link_options(Main PRIVATE -sASYNCIFY)
     target_link_options(Main PRIVATE -sALLOW_MEMORY_GROWTH=1)
     target_link_options(Main PRIVATE -sSTACK_SIZE=1048576)
