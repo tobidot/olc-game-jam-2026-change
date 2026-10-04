@@ -56,7 +56,7 @@ void EnemyVampire::MakeNextPlan(state::App &state, float elapsed_time)
         plan = std::make_unique<plan::Channel>(plan::ChannelConfig{
             .source = self,
             .target = player,
-            .sfx_cast = service::root()->assets->sfx_swarp,
+            .sfx_cast = nullptr,
             .animation_name = attack_name,
             .cast_time_window = cast_time_window,
             .sfx_time_window = sfx_time_window,

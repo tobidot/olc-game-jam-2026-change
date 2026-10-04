@@ -1,5 +1,7 @@
 #pragma once
 #include "entities/Entity.hpp"
+#include "olc/miniaudio.h"
+#include "olc/olcPGEX3_Miniaudio.h"
 #include "plans/BasePlan.hpp"
 #include "state/App.hpp"
 
@@ -11,6 +13,7 @@ namespace plan
 struct AreaAttackConfig
 {
     std::shared_ptr<entity::EntityHandle> source;
+    std::shared_ptr<olc::ext::Miniaudio::Sound> sfx_hit;
     std::string animation_name;
     std::pair<float, float> hit_time_window;
     float duration;
@@ -28,6 +31,7 @@ public:
 
 public:
     std::shared_ptr<entity::EntityHandle> source;
+    std::shared_ptr<olc::ext::Miniaudio::Sound> sfx_hit;
     std::string animation_name;
     std::pair<float, float> hit_time_window;
     float duration;

@@ -6,6 +6,7 @@
 #include "plans/DirectAttack.hpp"
 #include "plans/Move.hpp"
 #include "plans/Teleport.hpp"
+#include "services/RootService.hpp"
 
 using namespace entity;
 
@@ -115,6 +116,7 @@ void PlayerShinobi::MakeNextPlan(state::App &state, float elapsed_time)
     auto hit_time_window = animator.GetFrameWindowTime(attack_name, hit_frame, hit_frame) / animation_speed;
     plan = std::make_unique<plan::DirectAttack>(plan::DirectAttackConfig{
         .target = enemy,
+        .sfx_hit = service::root()->assets->sfx_shinobi_attack,
         .animation_name = attack_name,
         .hit_time_window = hit_time_window,
         .duration = duration,

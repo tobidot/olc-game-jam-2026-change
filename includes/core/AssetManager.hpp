@@ -37,8 +37,10 @@ public:
 
 public:
     // sounds
-    std::shared_ptr<olc::ext::Miniaudio::Sound> sfx_select;
     std::shared_ptr<olc::ext::Miniaudio::Sound> sfx_swarp;
+    std::shared_ptr<olc::ext::Miniaudio::Sound> sfx_samurai_attack;
+    std::shared_ptr<olc::ext::Miniaudio::Sound> sfx_shinobi_attack;
+    std::shared_ptr<olc::ext::Miniaudio::Sound> sfx_knight_attack;
     // plain images
     std::shared_ptr<olc::Image> background_jungle_texture;
     //
@@ -134,8 +136,10 @@ public:
     void LoadSatyrMissle1(olc::PixelGameEngine &engine);
     void LoadVampireMissle1(olc::PixelGameEngine &engine);
     void LoadWizardMissle1(olc::PixelGameEngine &engine);
-    void LoadSelectSound(olc::ext::Miniaudio::AudioEngine &audio);
     void LoadSwarpSound(olc::ext::Miniaudio::AudioEngine &audio);
+    void LoadKnightAttackSound(olc::ext::Miniaudio::AudioEngine &audio);
+    void LoadSamuraiAttackSound(olc::ext::Miniaudio::AudioEngine &audio);
+    void LoadShinobiAttackSound(olc::ext::Miniaudio::AudioEngine &audio);
     [[nodiscard]]
     std::shared_ptr<olc::Image> CreateImage(olc::PixelGameEngine &engine, const char *path) const;
     [[nodiscard]]

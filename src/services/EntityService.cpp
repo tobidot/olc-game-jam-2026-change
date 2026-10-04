@@ -78,8 +78,6 @@ std::shared_ptr<entity::EntityHandle> EntityService::SpawnEnemy(enums::EnemyType
     entity->position = {spawn_x, spawn_y};
     entity->is_flipped = true;
 
-    assets->sfx_select->Play();
-
     auto handle = std::make_shared<entity::EntityHandle>(entity);
     state->game_world.new_entities.push_back(handle);
 
@@ -116,7 +114,6 @@ EntityService::SpawnEffect(enums::EffectType type, const core::Vector &position)
     }
 
     entity->position = position;
-    assets->sfx_select->Play();
 
     auto handle = std::make_shared<entity::EntityHandle>(entity);
     state->game_world.new_entities.push_back(handle);

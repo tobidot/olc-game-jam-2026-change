@@ -3,13 +3,15 @@
 #include "entities/Entity.hpp"
 #include "services/EntityService.hpp"
 #include "services/RootService.hpp"
+#include "services/SoundService.hpp"
 #include "state/App.hpp"
 
 using namespace plan;
 
 AreaAttack::AreaAttack(const AreaAttackConfig &config)
     : animation_name(config.animation_name), duration(config.duration), hit_time_window(config.hit_time_window),
-      source(config.source), targets(config.targets), damage(config.damage), target(config.target), area(config.area)
+      source(config.source), targets(config.targets), damage(config.damage), target(config.target), area(config.area),
+      sfx_hit(config.sfx_hit)
 {
     name = "AreaAttack";
 }
@@ -37,6 +39,8 @@ void AreaAttack::Update(state::App &state, entity::Entity &entity, float elapsed
             target->ref->Damage(damage);
         }
         has_hit = true;
+
+        service::root()->sounds->Play(*sfx_hit);
     }
 
     time += elapsed_time;

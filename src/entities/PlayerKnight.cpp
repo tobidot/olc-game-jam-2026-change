@@ -6,6 +6,7 @@
 #include "plans/BasePlan.hpp"
 #include "plans/DirectAttack.hpp"
 #include "plans/Move.hpp"
+#include "services/RootService.hpp"
 
 using namespace entity;
 
@@ -68,6 +69,7 @@ void PlayerKnight::MakeNextPlan(state::App &state, float elapsed_time)
 
     plan = std::make_unique<plan::AreaAttack>(plan::AreaAttackConfig{
         .source = player,
+        .sfx_hit = service::root()->assets->sfx_knight_attack,
         .animation_name = attack_name,
         .hit_time_window = hit_time_window,
         .duration = duration,

@@ -54,7 +54,7 @@ void EnemySatyr::MakeNextPlan(state::App &state, float elapsed_time)
         plan = std::make_unique<plan::AimingMissleAttack>(plan::AimingMissleAttackConfig{
             .source = self,
             .target = state.game_world.player_entity,
-            .sfx_cast = service::root()->assets->sfx_swarp,
+            .sfx_cast = nullptr,
             .animation_name = attack_name,
             .cast_time_window = cast_frame_window / animation_speed,
             .sfx_time_window = sfx_frame_window / animation_speed,

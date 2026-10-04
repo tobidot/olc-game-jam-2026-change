@@ -86,8 +86,10 @@ void AssetManager::Load(olc::PixelGameEngine &engine, olc::ext::Miniaudio::Audio
     LoadSatyrMissle1(engine);
     LoadVampireMissle1(engine);
     LoadWizardMissle1(engine);
-    LoadSelectSound(audio);
     LoadSwarpSound(audio);
+    LoadKnightAttackSound(audio);
+    LoadShinobiAttackSound(audio);
+    LoadSamuraiAttackSound(audio);
 }
 
 AnimationDefinition AssetManager::CreateSimpleAnimation(
@@ -124,17 +126,28 @@ AnimationDefinition AssetManager::CreateSimpleAnimation(
     };
 }
 
-void AssetManager::LoadSelectSound(olc::ext::Miniaudio::AudioEngine &audio)
-{
-    sfx_select = std::make_shared<olc::ext::Miniaudio::Sound>();
-    audio.CreateSoundFromFile(*sfx_select, "assets/sfx/select.wav");
-}
-
 void AssetManager::LoadSwarpSound(olc::ext::Miniaudio::AudioEngine &audio)
 {
     sfx_swarp = std::make_shared<olc::ext::Miniaudio::Sound>();
     audio.CreateSoundFromFile(*sfx_swarp, "assets/sfx/swarp2.wav");
-    sfx_select->SetVolume(0.6f);
+}
+
+void AssetManager::LoadKnightAttackSound(olc::ext::Miniaudio::AudioEngine &audio)
+{
+    sfx_knight_attack = std::make_shared<olc::ext::Miniaudio::Sound>();
+    audio.CreateSoundFromFile(*sfx_knight_attack, "assets/sfx/knight_attack.wav");
+}
+
+void AssetManager::LoadSamuraiAttackSound(olc::ext::Miniaudio::AudioEngine &audio)
+{
+    sfx_samurai_attack = std::make_shared<olc::ext::Miniaudio::Sound>();
+    audio.CreateSoundFromFile(*sfx_samurai_attack, "assets/sfx/samurai_attack.wav");
+}
+
+void AssetManager::LoadShinobiAttackSound(olc::ext::Miniaudio::AudioEngine &audio)
+{
+    sfx_shinobi_attack = std::make_shared<olc::ext::Miniaudio::Sound>();
+    audio.CreateSoundFromFile(*sfx_shinobi_attack, "assets/sfx/shinobi_attack.wav");
 }
 
 void AssetManager::LoadKnight(olc::PixelGameEngine &engine)
