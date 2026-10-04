@@ -53,6 +53,9 @@ public:
     std::shared_ptr<olc::Image> shinobi_idle_texture;
     std::shared_ptr<olc::Image> shinobi_walk_texture;
     std::shared_ptr<olc::Image> shinobi_attack1_texture;
+    std::shared_ptr<olc::Image> shinobi_attack2_texture;
+    std::shared_ptr<olc::Image> shinobi_attack3_texture;
+    std::shared_ptr<olc::Image> shinobi_hurt_texture;
     std::shared_ptr<olc::Image> shinobi_die_texture;
     std::shared_ptr<olc::Image> wizard_idle_texture;
     std::shared_ptr<olc::Image> wizard_walk_texture;

@@ -515,7 +515,7 @@ void AssetManager::LoadVampire(olc::PixelGameEngine &engine)
         vampire_idle_texture,
         "idle",
         {5, 1},
-        {{"pivot", {0.5f, 1.0f}}},
+        {{"pivot", {0.5f, 1.0f}}, {"body", {0.5f, 0.5f}}, {"body", {0.5f, 0.5f}}},
         get_default_animation_times()
     );
 
@@ -523,7 +523,7 @@ void AssetManager::LoadVampire(olc::PixelGameEngine &engine)
         vampire_walk_texture,
         "walk",
         {6, 1},
-        {{"pivot", {0.5f, 1.0f}}},
+        {{"pivot", {0.5f, 1.0f}}, {"body", {0.5f, 0.5f}}},
         get_default_animation_times()
     );
 
@@ -531,7 +531,7 @@ void AssetManager::LoadVampire(olc::PixelGameEngine &engine)
         vampire_attack1_texture,
         "attack1",
         {6, 1},
-        {{"pivot", {0.5f, 1.0f}}, {"weapon", {0.7f, 0.5f}}},
+        {{"pivot", {0.5f, 1.0f}}, {"weapon", {0.7f, 0.5f}}, {"body", {0.5f, 0.5f}}},
         get_default_animation_times()
     );
 
@@ -598,6 +598,9 @@ void AssetManager::LoadShinobi(olc::PixelGameEngine &engine)
     const auto &idle_texture = shinobi_idle_texture = CreateImage(engine, "shinobi/Shinobi/Idle.png");
     const auto &walk_texture = shinobi_walk_texture = CreateImage(engine, "shinobi/Shinobi/Walk.png");
     const auto &attack1_texture = shinobi_attack1_texture = CreateImage(engine, "shinobi/Shinobi/Attack_1.png");
+    const auto &attack2_texture = shinobi_attack2_texture = CreateImage(engine, "shinobi/Shinobi/Attack_2.png");
+    const auto &attack3_texture = shinobi_attack3_texture = CreateImage(engine, "shinobi/Shinobi/Attack_3.png");
+    const auto &hurt_texture = shinobi_hurt_texture = CreateImage(engine, "shinobi/Shinobi/Hurt.png");
     const auto &die_texture = shinobi_die_texture = CreateImage(engine, "shinobi/Shinobi/Dead.png");
     // animations
     auto idle_animation_definition =
@@ -613,14 +616,34 @@ void AssetManager::LoadShinobi(olc::PixelGameEngine &engine)
         {{"pivot", {0.5f, 1.0f}}},
         get_default_animation_times()
     );
+    auto attack2_animation_definition = CreateSimpleAnimation(
+        attack2_texture,
+        "attack2",
+        {3, 1},
+        {{"pivot", {0.5f, 1.0f}}},
+        get_default_animation_times()
+    );
+    auto attack3_animation_definition = CreateSimpleAnimation(
+        attack3_texture,
+        "attack3",
+        {4, 1},
+        {{"pivot", {0.5f, 1.0f}}},
+        get_default_animation_times()
+    );
+
+    auto hurt_animation_definition =
+        CreateSimpleAnimation(hurt_texture, "hurt", {2, 1}, {{"pivot", {0.5f, 1.0f}}}, get_default_animation_times());
 
     auto die_animation_definition =
-        CreateSimpleAnimation(die_texture, "die", {4, 1}, {{"pivot", {0.25f, 1.0f}}}, get_default_animation_times());
+        CreateSimpleAnimation(die_texture, "die", {4, 1}, {{"pivot", {0.5f, 1.0f}}}, get_default_animation_times());
     // animators
     shinobi_animator = CreateAnimator({
         idle_animation_definition,
         walk_animation_defintion,
         attack1_animation_definition,
+        attack2_animation_definition,
+        attack3_animation_definition,
+        hurt_animation_definition,
         die_animation_definition,
     });
 }

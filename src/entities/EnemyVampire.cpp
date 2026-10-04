@@ -3,6 +3,7 @@
 #include "helper.hpp"
 #include "plans/AimingMissleAttack.hpp"
 #include "plans/BasePlan.hpp"
+#include "plans/Callback.hpp"
 #include "plans/ChainPlan.hpp"
 #include "plans/Channel.hpp"
 #include "plans/Chase.hpp"
@@ -37,7 +38,12 @@ void EnemyVampire::MakeNextPlan(state::App &state, float elapsed_time)
 
     if (distance < attack_range)
     {
-        auto duration = 1.7f;
+        if (!is_blood_available)
+        {
+            // idle wait for the blood
+            return;
+        }
+        auto duration = 1.3f;
         std::string attack_name = "attack1";
         size_t attack_frame = 5;
 
@@ -57,32 +63,29 @@ void EnemyVampire::MakeNextPlan(state::App &state, float elapsed_time)
             .duration = duration,
             .on_cast = on_cast,
         });
-        SetPlan(state, std::move(plan), 2.f);
+        SetPlan(state, std::move(plan), 0.33f);
+        return;
     }
-    else
-    {
-        auto target = position + difference.norm() * std::min(30.0f, difference.mag());
-        auto new_plan = std::make_unique<plan::Move>(core::Vector(target), 40.f);
-        SetPlan(state, std::move(new_plan), .25f);
-    }
+
+    // move towards player
+    auto target = position + difference.norm() * std::min(30.0f, difference.mag());
+    auto new_plan = std::make_unique<plan::Move>(core::Vector(target), 40.f);
+    SetPlan(state, std::move(new_plan), .25f);
 }
 
 void EnemyVampire::OnCast()
 {
+    is_blood_available = false;
+
     auto *state = service::root()->state;
     const auto attack_range = 250.0f;
     const auto &player = state->game_world.player_entity;
     auto self = state->game_world.FindEntityHandle(id);
 
-    std::cout << self.get() << "\n";
-    std::cout << (int)self->ref->target_type << "\n";
-
     auto duration = 0.45f;
     size_t attack_frame = 5;
 
-    const auto *explode_animation_name = "die";
     auto spawn_pixel_offset = GetCurrentAnchorPixelOffset("weapon");
-
     auto spawn_position = core::Vector(position + core::Vector{spawn_pixel_offset.x, 0.f});
     auto effect = service::root()->entities->SpawnEffect(enums::EffectType::BLOOD, spawn_position);
     effect->ref->z_offset = spawn_pixel_offset.y;
@@ -90,18 +93,34 @@ void EnemyVampire::OnCast()
     auto chase_back_plan = std::make_unique<plan::Chase>(self, 80.0f);
     //     std::shared_ptr<entity::EntityHandle> target;
 
-    std::string heal_animation_nane = "idle";
+    std::string damage_animation_name = "idle";
+    float damage_duration = 0.1f;
+    float damage_animation_speed =
+        effect->ref->animator.GetAnimationSpeedForDuration(damage_animation_name, damage_duration);
+    std::pair<float, float> damage_time_window =
+        effect->ref->animator.GetFrameWindowTime(damage_animation_name, 0, 0) / damage_animation_speed;
+    auto damage_plan = std::make_unique<plan::DirectAttack>(plan::DirectAttackConfig{
+        .target = player,
+        .animation_name = damage_animation_name,
+        .hit_time_window = damage_time_window,
+        .duration = damage_duration,
+        .max_range = 100.0f,
+        .damage = 10.f,
+    });
+
+    std::string heal_animation_name = "idle";
     float heal_duration = 0.1f;
-    float heal_animation_speed = effect->ref->animator.GetAnimationSpeedForDuration(heal_animation_nane, heal_duration);
+    float heal_animation_speed = effect->ref->animator.GetAnimationSpeedForDuration(heal_animation_name, heal_duration);
     std::pair<float, float> heal_time_window =
-        effect->ref->animator.GetFrameWindowTime(heal_animation_nane, 0, 0) / heal_animation_speed;
+        effect->ref->animator.GetFrameWindowTime(heal_animation_name, 0, 0) / heal_animation_speed;
     auto heal_plan = std::make_unique<plan::Heal>(plan::HealConfig{
         .target = self,
-        .animation_name = heal_animation_nane,
+        .animation_name = heal_animation_name,
         .heal_time_window = heal_time_window,
         .duration = heal_duration,
         .amount = 20.f,
     });
+    auto restore_blood_plan = std::make_unique<plan::Callback>([this] { this->is_blood_available = true; });
     auto die_plan = std::make_unique<plan::Die>(plan::DieConfig{
         .animation_name = "die",
         .duration = 0.33f,
@@ -109,8 +128,10 @@ void EnemyVampire::OnCast()
     std::vector<std::unique_ptr<plan::BasePlan>> plans = std::vector<std::unique_ptr<plan::BasePlan>>();
     plans.reserve(2);
     plans.push_back(std::move(chase_plan));
+    plans.push_back(std::move(damage_plan));
     plans.push_back(std::move(chase_back_plan));
     plans.push_back(std::move(heal_plan));
+    plans.push_back(std::move(restore_blood_plan));
     plans.push_back(std::move(die_plan));
     auto chain_plan = std::make_unique<plan::ChainPlan>(std::move(plans));
     effect->ref->SetPlan(*state, std::move(chain_plan));
