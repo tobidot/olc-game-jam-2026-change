@@ -2,6 +2,7 @@
 
 #include "core/AssetManager.hpp"
 #include "helper.hpp"
+#include "plans/AreaAttack.hpp"
 #include "plans/BasePlan.hpp"
 #include "plans/DirectAttack.hpp"
 #include "plans/Move.hpp"
@@ -44,13 +45,16 @@ void PlayerKnight::MakeNextPlan(state::App &state, float elapsed_time)
 
     const auto *attack_name = "attack1";
     auto duration = 0.66f;
-    auto attack_range = 60.0f;
+    auto attack_range = 50.0f;
     auto damage = 40.0f;
     auto cooldown = 1.65f;
     auto difference = enemy->ref->position - player->ref->position;
     auto distance = difference.mag();
     auto animation_speed = animator.GetAnimationSpeedForDuration(attack_name, duration);
     auto hit_time_window = animator.GetFrameWindowTime(attack_name, 3, 3) / animation_speed;
+    auto area = 25.0f;
+    // target the attack in direction of the enemy at the area radius distance
+    auto target = core::Vector(position + difference.norm() * area);
 
     if (distance > attack_range)
     {
@@ -61,12 +65,14 @@ void PlayerKnight::MakeNextPlan(state::App &state, float elapsed_time)
         return;
     }
 
-    plan = std::make_unique<plan::DirectAttack>(plan::DirectAttackConfig{
-        .target = enemy,
+    plan = std::make_unique<plan::AreaAttack>(plan::AreaAttackConfig{
+        .source = player,
         .animation_name = attack_name,
         .hit_time_window = hit_time_window,
         .duration = duration,
-        .max_range = attack_range * 1.5f,
+        .target = target,
+        .targets = {enums::TargetType::ENEMY},
+        .area = area,
         .damage = damage,
     });
 

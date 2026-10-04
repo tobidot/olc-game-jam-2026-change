@@ -215,19 +215,66 @@ void GameWorld::Load(const core::AssetManager &assets, state::App &state)
                     .total_time = 4.0f,
                     .spawns =
                         {
-                            std::pair{1.f, enums::EnemyType::SKELETON},
+                            std::pair{2.f, enums::EnemyType::SKELETON},
+                        },
+                },
+        },
+        state::LevelEvent{
+            .at_progress = 200.0f,
+            .spawns = {enums::EnemyType::SATYR},
+            .new_spawn_rate =
+                state::LevelSpawnRate{
+                    .total_time = 10.0f,
+                    .spawns =
+                        {
+                            std::pair{3.f, enums::EnemyType::SKELETON},
+                            std::pair{8.f, enums::EnemyType::SATYR},
+                            std::pair{8.f, enums::EnemyType::SATYR},
                         },
                 },
         },
         state::LevelEvent{
             .at_progress = 400.0f,
-            .spawns = {enums::EnemyType::SATYR},
+            .spawns = {enums::EnemyType::MINOTAUR},
+            .new_spawn_rate =
+                state::LevelSpawnRate{
+                    .total_time = 10.0f,
+                    .spawns =
+                        {
+                            std::pair{2.f, enums::EnemyType::MINOTAUR},
+                            std::pair{7.f, enums::EnemyType::MINOTAUR},
+                        },
+                },
+        },
+        state::LevelEvent{
+            .at_progress = 500.0f,
+            .spawns = {},
+            .new_spawn_rate =
+                state::LevelSpawnRate{
+                    .total_time = 10.0f,
+                    .spawns = {},
+                },
+        },
+        state::LevelEvent{
+            .at_progress = 600.0f,
+            .spawns = {enums::EnemyType::VAMPIRE, enums::EnemyType::VAMPIRE, enums::EnemyType::VAMPIRE},
+            .new_spawn_rate =
+                state::LevelSpawnRate{
+                    .total_time = 15.0f,
+                    .spawns =
+                        {
+                            std::pair{10.f, enums::EnemyType::SKELETON},
+                            std::pair{10.f, enums::EnemyType::VAMPIRE},
+                        },
+                },
+        },
+        state::LevelEvent{
+            .at_progress = 800.0f,
+            .spawns = {enums::EnemyType::WEREWOLF},
             .new_spawn_rate = state::LevelSpawnRate{
-                .total_time = 15.0f,
+                .total_time = 5.0f,
                 .spawns = {
-                    // std::pair{5.f, enums::EnemyType::WEREWOLF},
-                    // std::pair{10.f, enums::EnemyType::MINOTAUR},
-                    // std::pair{15.f, enums::EnemyType::SATYR},
+                    std::pair{1.f, enums::EnemyType::WEREWOLF},
                 },
             },
         },

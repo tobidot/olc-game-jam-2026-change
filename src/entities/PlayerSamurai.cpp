@@ -32,7 +32,7 @@ void PlayerSamurai::MakeNextPlan(state::App &state, float elapsed_time)
     auto player = state.game_world.player_entity;
     auto enemy = GetCurrentTarget(
         state,
-        PlayerBase::FilterByDistance(player->ref->position, 120.f),
+        PlayerBase::FilterByDistance(player->ref->position, 160.f),
         PlayerBase::OrderByDistanceAsc(player->ref->position)
     );
     auto movement_speed = 30.0f;
@@ -48,9 +48,9 @@ void PlayerSamurai::MakeNextPlan(state::App &state, float elapsed_time)
 
     auto duration = 1.2f;
     auto cooldown = 1.5f;
-    auto attack_range = 60.0f;
-    auto area = 40.0f;
-    auto damage = 40.0f;
+    auto attack_range = 70.0f;
+    auto area = 45.0f;
+    auto damage = 35.0f;
     auto difference = enemy->ref->position - player->ref->position;
     auto distance = difference.mag();
     // target the attack in direction of the enemy at the area radius distance
