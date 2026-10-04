@@ -2,8 +2,8 @@
 
 #include "core/AssetManager.hpp"
 #include "helper.hpp"
+#include "plans/AreaAttack.hpp"
 #include "plans/BasePlan.hpp"
-#include "plans/DirectAttack.hpp"
 #include "plans/Move.hpp"
 
 using namespace entity;
@@ -13,8 +13,9 @@ PlayerSamurai::PlayerSamurai(const core::AssetManager &assets, const state::App 
 {
     health = max_health = 200.0f;
     animator = *assets.samurai_animator;
-    scale = {1.f, 1.f};
-    current_animation = "walk";
+    scale = {1.2f, 1.2f};
+    shape.size = {18.f, 18.f};
+    current_animation = "idle";
     current_animation_time = 0.0f;
 }
 
@@ -23,15 +24,18 @@ void PlayerSamurai::Update(state::App &state, float elapsed_time)
     PlayerBase::Update(state, elapsed_time);
 }
 
+/**
+ * AOE damage dealer
+ */
 void PlayerSamurai::MakeNextPlan(state::App &state, float elapsed_time)
 {
     auto player = state.game_world.player_entity;
     auto enemy = GetCurrentTarget(
         state,
-        PlayerBase::FilterByDistance(player->ref->position, 250.f),
+        PlayerBase::FilterByDistance(player->ref->position, 120.f),
         PlayerBase::OrderByDistanceAsc(player->ref->position)
     );
-    auto movement_speed = 22.0f;
+    auto movement_speed = 30.0f;
 
     if (!enemy)
     {
@@ -42,15 +46,15 @@ void PlayerSamurai::MakeNextPlan(state::App &state, float elapsed_time)
         return;
     }
 
-    const auto *attack_name = "attack1";
-    auto duration = 0.66f;
+    auto duration = 1.2f;
+    auto cooldown = 1.5f;
     auto attack_range = 60.0f;
+    auto area = 40.0f;
     auto damage = 40.0f;
-    auto cooldown = 1.65f;
     auto difference = enemy->ref->position - player->ref->position;
     auto distance = difference.mag();
-    auto animation_speed = animator.GetAnimationSpeedForDuration(attack_name, duration);
-    auto hit_time_window = animator.GetFrameWindowTime(attack_name, 3, 3) / animation_speed;
+    // target the attack in direction of the enemy at the area radius distance
+    auto target = core::Vector(position + difference.norm() * area);
 
     if (distance > attack_range)
     {
@@ -61,12 +65,43 @@ void PlayerSamurai::MakeNextPlan(state::App &state, float elapsed_time)
         return;
     }
 
-    plan = std::make_unique<plan::DirectAttack>(plan::DirectAttackConfig{
-        .target = enemy,
+    const auto attack_index = rand() % 3;
+    std::string attack_name;
+    auto hit_frame = 0;
+    switch (attack_index)
+    {
+        case 0:
+        {
+            attack_name = "attack1";
+            hit_frame = 2;
+            break;
+        }
+        case 1:
+        {
+            attack_name = "attack2";
+            hit_frame = 4;
+            break;
+        }
+        case 2:
+        {
+            attack_name = "attack3";
+            hit_frame = 2;
+            break;
+        }
+        default:
+            throw std::runtime_error("Unknown attack pattern");
+    };
+
+    auto animation_speed = animator.GetAnimationSpeedForDuration(attack_name, duration);
+    auto hit_time_window = animator.GetFrameWindowTime(attack_name, hit_frame, hit_frame) / animation_speed;
+    plan = std::make_unique<plan::AreaAttack>(plan::AreaAttackConfig{
+        .source = player,
         .animation_name = attack_name,
         .hit_time_window = hit_time_window,
         .duration = duration,
-        .max_range = attack_range * 1.5f,
+        .target = target,
+        .targets = {enums::TargetType::ENEMY},
+        .area = area,
         .damage = damage,
     });
 

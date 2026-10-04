@@ -1,5 +1,6 @@
-#include "core/AssetManager.hpp"
 #include "entities/EffectFireBall.hpp"
+
+#include "core/AssetManager.hpp"
 #include "state/App.hpp"
 
 using namespace entity;

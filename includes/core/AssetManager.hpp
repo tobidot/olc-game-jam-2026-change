@@ -49,6 +49,8 @@ public:
     std::shared_ptr<olc::Image> samurai_idle_texture;
     std::shared_ptr<olc::Image> samurai_walk_texture;
     std::shared_ptr<olc::Image> samurai_attack1_texture;
+    std::shared_ptr<olc::Image> samurai_attack2_texture;
+    std::shared_ptr<olc::Image> samurai_attack3_texture;
     std::shared_ptr<olc::Image> samurai_die_texture;
     std::shared_ptr<olc::Image> shinobi_idle_texture;
     std::shared_ptr<olc::Image> shinobi_walk_texture;

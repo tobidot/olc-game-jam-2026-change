@@ -653,7 +653,9 @@ void AssetManager::LoadSamurai(olc::PixelGameEngine &engine)
     const auto &idle_texture = samurai_idle_texture = CreateImage(engine, "samurai/Samurai/Idle.png");
     const auto &walk_texture = samurai_walk_texture = CreateImage(engine, "samurai/Samurai/Walk.png");
     const auto &attack1_texture = samurai_attack1_texture = CreateImage(engine, "samurai/Samurai/Attack_1.png");
-    const auto &die_texture = samurai_attack1_texture = CreateImage(engine, "samurai/Samurai/Dead.png");
+    const auto &attack2_texture = samurai_attack2_texture = CreateImage(engine, "samurai/Samurai/Attack_2.png");
+    const auto &attack3_texture = samurai_attack3_texture = CreateImage(engine, "samurai/Samurai/Attack_3.png");
+    const auto &die_texture = samurai_die_texture = CreateImage(engine, "samurai/Samurai/Dead.png");
     // animations
     auto idle_animation_definition =
         CreateSimpleAnimation(idle_texture, "idle", {6, 1}, {{"pivot", {0.25f, 1.0f}}}, get_default_animation_times());
@@ -669,14 +671,32 @@ void AssetManager::LoadSamurai(olc::PixelGameEngine &engine)
         get_default_animation_times()
     );
 
+    auto attack2_animation_definition = CreateSimpleAnimation(
+        attack2_texture,
+        "attack2",
+        {5, 1},
+        {{"pivot", {0.5f, 1.0f}}},
+        get_default_animation_times()
+    );
+
+    auto attack3_animation_definition = CreateSimpleAnimation(
+        attack3_texture,
+        "attack3",
+        {4, 1},
+        {{"pivot", {0.5f, 1.0f}}},
+        get_default_animation_times()
+    );
+
     auto die_animation_definition =
-        CreateSimpleAnimation(die_texture, "die", {6, 1}, {{"pivot", {0.25f, 1.0f}}}, get_default_animation_times());
+        CreateSimpleAnimation(die_texture, "die", {6, 1}, {{"pivot", {0.5f, 1.0f}}}, get_default_animation_times());
 
     // animators
     samurai_animator = CreateAnimator({
         idle_animation_definition,
         walk_animation_defintion,
         attack1_animation_definition,
+        attack2_animation_definition,
+        attack3_animation_definition,
         die_animation_definition,
     });
 }
