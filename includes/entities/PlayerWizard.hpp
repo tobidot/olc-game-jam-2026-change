@@ -17,6 +17,9 @@ public:
 public:
     void Update(state::App &state, float elapsed_time) override;
     void MakeNextPlan(state::App &state, float elapsed_time) override;
+
+public:
+    void OnCast();
 };
 
 } // namespace entity

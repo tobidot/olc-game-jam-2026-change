@@ -188,7 +188,8 @@ core::Vector Entity::GetCurrentAnchorPixelOffset(const std::string &anchor_name)
                       ? animator.GetImageAnchor(current_animation, current_animation_time, anchor_name)
                       : pivot;
     auto offset = anchor - pivot;
-    auto offset_pixels = core::Vector(offset * image.regionsize * scale * core::Vector{-1.0f, -1.0f});
+    auto offset_pixels =
+        core::Vector(offset * image.regionsize * scale * core::Vector{is_flipped ? -1.0f : 1.f, -1.0f});
 
     return offset_pixels;
 }

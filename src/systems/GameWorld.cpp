@@ -43,11 +43,14 @@ void GameWorld::Update(const core::AssetManager &assets, const GameInput &input,
         HandleWorldBounds(state, *entity->ref, elapsed_time);
     }
     auto old_level_progress = state.game_world.player.level_progress;
-    auto current_entity_level_progress = floorf(state.game_world.player_entity->ref->position.x / 50.0f) * 50.0f;
+    auto progress_steps = 25.0f;
+    auto current_entity_level_progress =
+        floorf(state.game_world.player_entity->ref->position.x / progress_steps) * progress_steps;
     auto level_progress_diff = current_entity_level_progress - old_level_progress;
+    state.game_world.player.switch_cooldown = std::max(0.f, state.game_world.player.switch_cooldown - elapsed_time);
 
     // input based handling
-    if (input.switchCharacter)
+    if (input.switchCharacter && state.game_world.player.switch_cooldown <= 0.0f)
     {
         auto type = std::array<enums::CharacterType, 4>({
             enums::CharacterType::WIZARD,
@@ -56,6 +59,7 @@ void GameWorld::Update(const core::AssetManager &assets, const GameInput &input,
             enums::CharacterType::SHINOBI,
         });
         SwitchPlayerCharacterTo(assets, state, type.at(rand() % 4));
+        state.game_world.player.switch_cooldown = 10.0f;
     }
     if (input.cheatSpawnEnemy)
     {
@@ -65,12 +69,12 @@ void GameWorld::Update(const core::AssetManager &assets, const GameInput &input,
 
     //
 
-    if (level_progress_diff > state.settings.screen_size.x * 0.6f)
+    if (level_progress_diff > state.settings.screen_size.x * 0.4f)
     {
         state.game_world.player.level_progress +=
             floorf(std::max(20.0f, level_progress_diff / 5.0f) / 10.0f) * 10.0f * elapsed_time;
     }
-    else if (level_progress_diff > state.settings.screen_size.x * 0.3f)
+    else if (level_progress_diff > state.settings.screen_size.x * 0.15f)
     {
         state.game_world.player.level_progress += 20.0f * elapsed_time;
     }
@@ -192,7 +196,7 @@ void GameWorld::Load(const core::AssetManager &assets, state::App &state)
     };
 
     // spawn player
-    auto player_entity = std::make_shared<entity::PlayerKnight>(assets, state, state.game_world.GetNextEntityID());
+    auto player_entity = std::make_shared<entity::PlayerWizard>(assets, state, state.game_world.GetNextEntityID());
     player_entity->position = {75.f, 125.f};
     state.game_world.player_entity = std::make_shared<entity::EntityHandle>(player_entity);
     state.game_world.entities.push_back(state.game_world.player_entity);
@@ -200,21 +204,18 @@ void GameWorld::Load(const core::AssetManager &assets, state::App &state)
     auto &level = state.game_world.level = state::Level();
     level.events = {
         state::LevelEvent{
-            .at_progress = 1.0f,
+            .at_progress = 25.0f,
             .spawns =
                 {
-                    // enums::EnemyType::SKELETON,
+                    enums::EnemyType::SKELETON,
+                    enums::EnemyType::SKELETON,
                 },
             .new_spawn_rate =
                 state::LevelSpawnRate{
-                    .total_time = 2.0f,
+                    .total_time = 4.0f,
                     .spawns =
                         {
-                            // std::pair{1.f, enums::EnemyType::SKELETON},
-                            // std::pair{5.f, enums::EnemyType::SKELETON},
-                            // std::pair{7.f, enums::EnemyType::GHOST},
-                            // std::pair{9.f, enums::EnemyType::VAMPIRE},
-                            // std::pair{10.5f, enums::EnemyType::GHOST},
+                            std::pair{1.f, enums::EnemyType::SKELETON},
                         },
                 },
         },

@@ -85,6 +85,7 @@ void AssetManager::Load(olc::PixelGameEngine &engine, olc::ext::Miniaudio::Audio
     LoadWizard(engine);
     LoadSatyrMissle1(engine);
     LoadVampireMissle1(engine);
+    LoadWizardMissle1(engine);
     LoadSelectSound(audio);
     LoadSwarpSound(audio);
 }
@@ -195,7 +196,7 @@ void AssetManager::LoadMinotaur(olc::PixelGameEngine &engine)
         minotaur_idle_texture,
         "idle",
         {10, 1},
-        {{"pivot", {0.5f, 1.0f}}},
+        {{"pivot", {0.4f, 1.0f}}},
         get_default_animation_times()
     );
 
@@ -211,7 +212,7 @@ void AssetManager::LoadMinotaur(olc::PixelGameEngine &engine)
         minotaur_attack1_texture,
         "attack1",
         {5, 1},
-        {{"pivot", {0.5f, 1.0f}}},
+        {{"pivot", {0.3f, 1.0f}}},
         get_default_animation_times()
     );
 
@@ -706,6 +707,7 @@ void AssetManager::LoadWizard(olc::PixelGameEngine &engine)
     const auto &idle_texture = wizard_idle_texture = CreateImage(engine, "wizard/Wanderer Magican/Idle.png");
     const auto &walk_texture = wizard_walk_texture = CreateImage(engine, "wizard/Wanderer Magican/Walk.png");
     const auto &attack1_texture = wizard_attack1_texture = CreateImage(engine, "wizard/Wanderer Magican/Attack_1.png");
+    const auto &cast1_texture = wizard_cast1_texture = CreateImage(engine, "wizard/Wanderer Magican/Magic_sphere.png");
     const auto &die_texture = wizard_die_texture = CreateImage(engine, "wizard/Wanderer Magican/Dead.png");
     // animations
     auto idle_animation_definition = CreateSimpleAnimation(
@@ -722,6 +724,31 @@ void AssetManager::LoadWizard(olc::PixelGameEngine &engine)
         {7, 1},
         {{"pivot", {0.5f, 1.0f}}, {"body", {0.5f, 0.5f}}},
         get_default_animation_times()
+    );
+
+    auto cast1_animation_definition = CreateSimpleAnimation(
+        cast1_texture,
+        "cast1",
+        {16, 1},
+        {{"pivot", {0.33f, 1.0f}}, {"body", {0.5f, 0.5f}}, {"weapon", {0.7f, 0.7f}}},
+        {
+            0.33f,
+            0.33f,
+            0.33f,
+            0.33f,
+            0.33f,
+            0.33f,
+            0.33f,
+            0.33f,
+            0.33f,
+            0.33f,
+            0.33f,
+            0.33f,
+            0.33f,
+            0.33f,
+            0.33f,
+            0.33f,
+        }
     );
 
     auto attack1_animation_definition = CreateSimpleAnimation(
@@ -745,6 +772,62 @@ void AssetManager::LoadWizard(olc::PixelGameEngine &engine)
         idle_animation_definition,
         walk_animation_defintion,
         attack1_animation_definition,
+        cast1_animation_definition,
+        die_animation_definition,
+    });
+}
+
+void AssetManager::LoadWizardMissle1(olc::PixelGameEngine &engine)
+{
+    const auto &texture = wizard_missle1_texture = CreateImage(engine, "wizard/Wanderer Magican/Charge_1.png");
+    // animations
+    auto idle_animation_definition = AnimationDefinition{
+        .name = "idle",
+        .image = texture,
+        .frame_slices = {9, 1},
+        .frames = {
+            {
+                .slice_index = {0, 0},
+                .seconds = 0.5f,
+                .anchors = {{"pivot", {0.5f, 0.5f}}},
+            },
+            {
+                .slice_index = {1, 0},
+                .seconds = 0.5f,
+                .anchors = {{"pivot", {0.5f, 0.5f}}},
+            },
+        },
+    };
+
+    auto walk_animation_definition = AnimationDefinition{
+        .name = "walk",
+        .image = texture,
+        .frame_slices = {9, 1},
+        .frames = {
+            {.slice_index = {0, 0}, .seconds = 0.16f, .anchors = {{"pivot", {0.5f, 0.5f}}}},
+            {.slice_index = {1, 0}, .seconds = 0.16f, .anchors = {{"pivot", {0.5f, 0.5f}}}},
+            {.slice_index = {2, 0}, .seconds = 0.16f, .anchors = {{"pivot", {0.5f, 0.5f}}}},
+            {.slice_index = {3, 0}, .seconds = 0.16f, .anchors = {{"pivot", {0.5f, 0.5f}}}},
+        },
+    };
+
+    auto die_animation_definition = AnimationDefinition{
+        .name = "die",
+        .image = texture,
+        .frame_slices = {9, 1},
+        .frames = {
+            {.slice_index = {4, 0}, .seconds = 0.16f, .anchors = {{"pivot", {0.5f, 0.5f}}}},
+            {.slice_index = {5, 0}, .seconds = 0.16f, .anchors = {{"pivot", {0.5f, 0.5f}}}},
+            {.slice_index = {6, 0}, .seconds = 0.16f, .anchors = {{"pivot", {0.5f, 0.5f}}}},
+            {.slice_index = {7, 0}, .seconds = 0.16f, .anchors = {{"pivot", {0.5f, 0.5f}}}},
+            {.slice_index = {8, 0}, .seconds = 0.16f, .anchors = {{"pivot", {0.5f, 0.5f}}}},
+        },
+    };
+
+    // animators
+    wizard_missle1_animator = CreateAnimator({
+        idle_animation_definition,
+        walk_animation_definition,
         die_animation_definition,
     });
 }

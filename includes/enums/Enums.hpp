@@ -28,6 +28,7 @@ enum class EffectType : uint8_t
 {
     FIREBALL,
     BLOOD,
+    PIERCING_LIGHT,
     MAX,
 };
 

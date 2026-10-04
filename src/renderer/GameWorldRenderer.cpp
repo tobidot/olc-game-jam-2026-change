@@ -17,7 +17,20 @@ void GameWorldRenderer::Draw(olc::Draw &draw, const core::AssetManager &assets, 
     std::ranges::sort(
         sorted_entites,
         [](const std::shared_ptr<entity::EntityHandle> &first, const std::shared_ptr<entity::EntityHandle> &second)
-        { return first->ref->position.y < second->ref->position.y; }
+        {
+            // draw effects on top
+            if (first->ref->target_type == enums::TargetType::EFFECT &&
+                second->ref->target_type != enums::TargetType::EFFECT)
+            {
+                return false;
+            }
+            if (first->ref->target_type != enums::TargetType::EFFECT &&
+                second->ref->target_type == enums::TargetType::EFFECT)
+            {
+                return true;
+            }
+            return first->ref->position.y < second->ref->position.y;
+        }
     );
 
     for (const auto &entity : sorted_entites)

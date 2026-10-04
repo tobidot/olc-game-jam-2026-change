@@ -62,6 +62,7 @@ public:
     std::shared_ptr<olc::Image> wizard_idle_texture;
     std::shared_ptr<olc::Image> wizard_walk_texture;
     std::shared_ptr<olc::Image> wizard_attack1_texture;
+    std::shared_ptr<olc::Image> wizard_cast1_texture;
     std::shared_ptr<olc::Image> wizard_die_texture;
     //
     std::shared_ptr<olc::Image> ghost_idle_texture;
@@ -101,6 +102,7 @@ public:
     // effect images
     std::shared_ptr<olc::Image> satyr_missle1_texture;
     std::shared_ptr<olc::Image> vampire_missle1_texture;
+    std::shared_ptr<olc::Image> wizard_missle1_texture;
     // animations
     std::shared_ptr<Animator> knight_animator;
     std::shared_ptr<Animator> samurai_animator;
@@ -115,6 +117,7 @@ public:
     // effect animations
     std::shared_ptr<Animator> satyr_missle1_animator;
     std::shared_ptr<Animator> vampire_missle1_animator;
+    std::shared_ptr<Animator> wizard_missle1_animator;
 
 public:
     void Load(olc::PixelGameEngine &engine, olc::ext::Miniaudio::AudioEngine &audio);
@@ -130,6 +133,7 @@ public:
     void LoadWerewolf(olc::PixelGameEngine &engine);
     void LoadSatyrMissle1(olc::PixelGameEngine &engine);
     void LoadVampireMissle1(olc::PixelGameEngine &engine);
+    void LoadWizardMissle1(olc::PixelGameEngine &engine);
     void LoadSelectSound(olc::ext::Miniaudio::AudioEngine &audio);
     void LoadSwarpSound(olc::ext::Miniaudio::AudioEngine &audio);
     [[nodiscard]]
