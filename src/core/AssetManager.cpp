@@ -84,6 +84,7 @@ void AssetManager::Load(olc::PixelGameEngine &engine, olc::ext::Miniaudio::Audio
     LoadShinobi(engine);
     LoadWizard(engine);
     LoadSatyrMissle1(engine);
+    LoadVampireMissle1(engine);
     LoadSelectSound(audio);
     LoadSwarpSound(audio);
 }
@@ -530,17 +531,64 @@ void AssetManager::LoadVampire(olc::PixelGameEngine &engine)
         vampire_attack1_texture,
         "attack1",
         {6, 1},
-        {{"pivot", {0.5f, 1.0f}}},
+        {{"pivot", {0.5f, 1.0f}}, {"weapon", {0.7f, 0.5f}}},
         get_default_animation_times()
     );
 
     auto die_animation_definition =
-        CreateSimpleAnimation(die_texture, "die", {8, 1}, {{"pivot", {0.25f, 1.0f}}}, get_default_animation_times());
+        CreateSimpleAnimation(die_texture, "die", {8, 1}, {{"pivot", {0.5f, 1.0f}}}, get_default_animation_times());
     // animators
     vampire_animator = CreateAnimator({
         idle_animation_definition,
         walk_animation_defintion,
         attack1_animation_definition,
+        die_animation_definition,
+    });
+}
+
+void AssetManager::LoadVampireMissle1(olc::PixelGameEngine &engine)
+{
+    const auto &texture = vampire_missle1_texture = CreateImage(engine, "vampire/Countess_Vampire/Blood_Charge_4.png");
+    // animations
+    auto idle_animation_definition = AnimationDefinition{
+        .name = "idle",
+        .image = texture,
+        .frame_slices = {4, 1},
+        .frames = {{
+            .slice_index = {1, 0},
+            .seconds = 0.5f,
+            .anchors = {{"pivot", {0.5f, 0.5f}}},
+        }},
+    };
+
+    auto walk_animation_definition = AnimationDefinition{
+        .name = "walk",
+        .image = texture,
+        .frame_slices = {4, 1},
+        .frames = {
+            {.slice_index = {1, 0}, .seconds = 0.16f, .anchors = {{"pivot", {0.5f, 0.5f}}}},
+            {.slice_index = {2, 0}, .seconds = 0.16f, .anchors = {{"pivot", {0.5f, 0.5f}}}},
+            {.slice_index = {3, 0}, .seconds = 0.16f, .anchors = {{"pivot", {0.5f, 0.5f}}}},
+            {.slice_index = {4, 0}, .seconds = 0.16f, .anchors = {{"pivot", {0.5f, 0.5f}}}},
+        },
+    };
+
+    auto die_animation_definition = AnimationDefinition{
+        .name = "die",
+        .image = texture,
+        .frame_slices = {4, 1},
+        .frames = {
+            {.slice_index = {1, 0}, .seconds = 0.16f, .anchors = {{"pivot", {0.5f, 0.5f}}}},
+            {.slice_index = {2, 0}, .seconds = 0.16f, .anchors = {{"pivot", {0.5f, 0.5f}}}},
+            {.slice_index = {3, 0}, .seconds = 0.16f, .anchors = {{"pivot", {0.5f, 0.5f}}}},
+            {.slice_index = {4, 0}, .seconds = 0.16f, .anchors = {{"pivot", {0.5f, 0.5f}}}},
+        },
+    };
+
+    // animators
+    vampire_missle1_animator = CreateAnimator({
+        idle_animation_definition,
+        walk_animation_definition,
         die_animation_definition,
     });
 }

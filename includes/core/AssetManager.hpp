@@ -12,6 +12,7 @@ namespace core
 class AssetManager
 {
 public:
+    [[nodiscard]]
     std::vector<float> get_default_animation_times() const
     {
         return {
@@ -94,6 +95,7 @@ public:
     std::shared_ptr<olc::Image> vampire_die_texture;
     // effect images
     std::shared_ptr<olc::Image> satyr_missle1_texture;
+    std::shared_ptr<olc::Image> vampire_missle1_texture;
     // animations
     std::shared_ptr<Animator> knight_animator;
     std::shared_ptr<Animator> samurai_animator;
@@ -107,6 +109,7 @@ public:
     std::shared_ptr<Animator> vampire_animator;
     // effect animations
     std::shared_ptr<Animator> satyr_missle1_animator;
+    std::shared_ptr<Animator> vampire_missle1_animator;
 
 public:
     void Load(olc::PixelGameEngine &engine, olc::ext::Miniaudio::AudioEngine &audio);
@@ -121,6 +124,7 @@ public:
     void LoadSatyr(olc::PixelGameEngine &engine);
     void LoadWerewolf(olc::PixelGameEngine &engine);
     void LoadSatyrMissle1(olc::PixelGameEngine &engine);
+    void LoadVampireMissle1(olc::PixelGameEngine &engine);
     void LoadSelectSound(olc::ext::Miniaudio::AudioEngine &audio);
     void LoadSwarpSound(olc::ext::Miniaudio::AudioEngine &audio);
     [[nodiscard]]

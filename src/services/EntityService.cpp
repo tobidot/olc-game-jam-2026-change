@@ -1,6 +1,7 @@
 #include "services/EntityService.hpp"
 
 #include "core/AssetManager.hpp"
+#include "entities/EffectBlood.hpp"
 #include "entities/EffectFireBall.hpp"
 #include "entities/EnemyGhost.hpp"
 #include "entities/EnemyMinotaur.hpp"
@@ -92,6 +93,11 @@ EntityService::SpawnEffect(enums::EffectType type, const core::Vector &position)
         case enums::EffectType::FIREBALL:
         {
             entity = std::make_shared<entity::EffectFireBall>(*assets, *state, next_id);
+            break;
+        }
+        case enums::EffectType::BLOOD:
+        {
+            entity = std::make_shared<entity::EffectBlood>(*assets, *state, next_id);
             break;
         }
         default:

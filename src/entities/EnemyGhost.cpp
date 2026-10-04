@@ -32,7 +32,7 @@ void EnemyGhost::MakeNextPlan(state::App &state, float elapsed_time)
     {
         const auto *attack_name = "attack1";
         auto duration = 0.5f;
-        auto hit_time_window = animator.GetFrameWindowTime(attack_name, 4, 4) /
+        auto hit_time_window = animator.GetFrameWindowTime(attack_name, 3, 3) /
                                animator.GetAnimationSpeedForDuration(attack_name, duration);
         plan = std::make_unique<plan::DirectAttack>(plan::DirectAttackConfig{
             .target = state.game_world.player_entity,

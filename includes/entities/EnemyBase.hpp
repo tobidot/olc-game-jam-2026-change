@@ -8,7 +8,7 @@ namespace entity
 class EnemyBase : public Entity
 {
 public:
-    EnemyBase(size_t id);
+    explicit EnemyBase(size_t id);
     ~EnemyBase() override = default;
 
 public:

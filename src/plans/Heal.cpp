@@ -29,7 +29,7 @@ void Heal::Update(state::App &state, entity::Entity &entity, float elapsed_time)
     const auto is_heal_time_window = IsInTimeWindow(heal_time_window, time, elapsed_time);
     if (!has_healed && is_heal_time_window)
     {
-        entity.Heal(amount);
+        target->ref->Heal(amount);
         has_healed = true;
     }
 

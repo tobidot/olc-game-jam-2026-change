@@ -1,8 +1,8 @@
 #pragma once
-#include <inttypes.h>
 
 namespace enums
 {
+using uint8_t = unsigned char;
 
 enum class CharacterType : uint8_t
 {
@@ -27,6 +27,7 @@ enum class EnemyType : uint8_t
 enum class EffectType : uint8_t
 {
     FIREBALL,
+    BLOOD,
     MAX,
 };
 

@@ -47,7 +47,7 @@ void GameInput::PreUpdate(const olc::hw::Mouse &mouse, const olc::hw::Keyboard &
         cheatSpawnEnemy = true;
         cheatSpawnEnemyType = enums::EnemyType::VAMPIRE;
     }
-    if (keyboard.GetKey(olc::Key::T).bPressed)
+    if (keyboard.GetKey(olc::Key::Z).bPressed)
     {
         cheatSpawnEnemy = true;
         cheatSpawnEnemyType = enums::EnemyType::WEREWOLF;
