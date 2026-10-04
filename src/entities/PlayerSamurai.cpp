@@ -11,7 +11,8 @@ using namespace entity;
 PlayerSamurai::PlayerSamurai(const core::AssetManager &assets, const state::App &state, size_t id)
     : PlayerBase(enums::CharacterType::SAMURAI, id)
 {
-    health = max_health = 200.0f;
+    health = max_health = 250.0f;
+    armor = 3.0f;
     animator = *assets.samurai_animator;
     scale = {1.2f, 1.2f};
     shape.size = {18.f, 18.f};

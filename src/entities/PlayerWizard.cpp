@@ -18,7 +18,8 @@ using namespace entity;
 PlayerWizard::PlayerWizard(const core::AssetManager &assets, const state::App &state, size_t id)
     : PlayerBase(enums::CharacterType::WIZARD, id)
 {
-    health = max_health = 80.0f;
+    health = max_health = 160.0f;
+    armor = 0.0f;
     animator = *assets.wizard_animator;
     scale = {1.f, 1.f};
     current_animation = "walk";

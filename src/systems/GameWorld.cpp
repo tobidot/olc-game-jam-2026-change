@@ -72,6 +72,16 @@ void GameWorld::Update(const core::AssetManager &assets, const GameInput &input,
         SpawnEnemy(assets, state, type);
     }
 
+    if (state.game_world.player.heal_cooldown <= 0.0f)
+    {
+        state.game_world.player.heal_cooldown = 30.f;
+        state.game_world.player_entity->ref->Heal(25.0f);
+    }
+    else
+    {
+        state.game_world.player.heal_cooldown -= elapsed_time;
+    }
+
     //
 
     if (level_progress_diff > state.settings.screen_size.x * 0.4f)

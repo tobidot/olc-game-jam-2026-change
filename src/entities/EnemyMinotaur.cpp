@@ -10,6 +10,7 @@ using namespace entity;
 EnemyMinotaur::EnemyMinotaur(const core::AssetManager &assets, const state::App &state, size_t id) : EnemyBase(id)
 {
     health = max_health = 225.0f;
+    armor = 8.0f;
     animator = *assets.minotaur_animator;
     shape.size = {25.f, 25.f};
     scale = {1.f, 1.f};

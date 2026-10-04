@@ -13,6 +13,7 @@ PlayerShinobi::PlayerShinobi(const core::AssetManager &assets, const state::App 
     : PlayerBase(enums::CharacterType::SHINOBI, id)
 {
     health = max_health = 200.0f;
+    armor = 1.0f;
     animator = *assets.shinobi_animator;
     scale = {.8f, .8f};
     current_animation = "walk";

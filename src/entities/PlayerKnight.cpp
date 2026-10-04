@@ -13,6 +13,7 @@ PlayerKnight::PlayerKnight(const core::AssetManager &assets, const state::App &s
     : PlayerBase(enums::CharacterType::KNIGHT, id)
 {
     health = max_health = 500.0f;
+    armor = 4.0f;
     animator = *assets.knight_animator;
     scale = {1.f, 1.f};
     current_animation = "walk";

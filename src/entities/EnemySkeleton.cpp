@@ -9,6 +9,7 @@ using namespace entity;
 EnemySkeleton::EnemySkeleton(const core::AssetManager &assets, const state::App &state, size_t id) : EnemyBase(id)
 {
     health = max_health = 100.0f;
+    armor = 5.0f;
     animator = *assets.skeleton_animator;
     scale = {.8f, .8f};
     shape.size = {10.f, 10.f};

@@ -19,6 +19,7 @@ public:
     enums::CharacterType character_slot_right = enums::CharacterType::KNIGHT;
     float character_slot_left_cooldown = 0.0f;
     float character_slot_right_cooldown = 0.0f;
+    float heal_cooldown = 0.0f;
     std::vector<Card> cards;
 };
 

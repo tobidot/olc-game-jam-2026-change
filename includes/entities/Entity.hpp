@@ -35,6 +35,7 @@ public:
 
 public:
     enums::TargetType target_type;
+    float armor = 0.0f;
     float health = 50.0f;
     float max_health = 100.0f;
     std::string current_animation = "idle";

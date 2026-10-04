@@ -157,7 +157,7 @@ void Entity::SetNextAnimation(const std::string &name)
 
 void Entity::Damage(float amount)
 {
-    health -= amount;
+    health -= std::max(1.0f, amount - armor);
     damage_animation_time = 0;
 }
 
