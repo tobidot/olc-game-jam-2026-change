@@ -76,6 +76,8 @@ public:
         asset_manager->Load(*this, audio);
         game_world->Load(*asset_manager, *app_state);
 
+        service::root()->sounds->PlayMusic(*asset_manager->music_main);
+
         std::cout << "Create Main Finished\n";
         return true;
     }
@@ -92,7 +94,10 @@ public:
             game_world->Update(*asset_manager, *game_input, *app_state, elapsed_time);
             game_input->PostUpdate(elapsed_time);
 
-            draw.Circle(mouse.GetPosition(), 10, olc::Colour::BLUE);
+            if (game_input->toggleMusic)
+            {
+                service::root()->sounds->PlayMusic(*asset_manager->music_main);
+            }
 
             return true;
         }

@@ -12,6 +12,7 @@ public:
     bool useCharacterSlotRight = false;
     bool cheatSpawnEnemy = false;
     bool cheatMode = false;
+    bool toggleMusic = false;
     enums::EnemyType cheatSpawnEnemyType = enums::EnemyType::GHOST;
 
 public:

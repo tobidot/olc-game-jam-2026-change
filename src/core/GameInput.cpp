@@ -16,6 +16,11 @@ void GameInput::PreUpdate(const olc::hw::Mouse &mouse, const olc::hw::Keyboard &
         // boost = true;
     }
 
+    if (keyboard.GetKey(olc::Key::M).bPressed)
+    {
+        toggleMusic = true;
+    }
+
     if (keyboard.GetKey(olc::Key::Q).bPressed || keyboard.GetKey(olc::Key::LEFT).bPressed ||
         keyboard.GetKey(olc::Key::OEM_1).bPressed || mouse.GetButton(0).bPressed)
     {
@@ -74,5 +79,6 @@ void GameInput::PostUpdate(float fElapsedTime)
     useCharacterSlotLeft = false;
     useCharacterSlotRight = false;
     cheatSpawnEnemy = false;
+    toggleMusic = false;
     // boost = false;
 }

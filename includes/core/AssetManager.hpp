@@ -41,6 +41,7 @@ public:
     std::shared_ptr<olc::ext::Miniaudio::Sound> sfx_samurai_attack;
     std::shared_ptr<olc::ext::Miniaudio::Sound> sfx_shinobi_attack;
     std::shared_ptr<olc::ext::Miniaudio::Sound> sfx_knight_attack;
+    std::shared_ptr<olc::ext::Miniaudio::Sound> music_main;
     // plain images
     std::shared_ptr<olc::Image> background_jungle_texture;
     //
@@ -140,6 +141,7 @@ public:
     void LoadKnightAttackSound(olc::ext::Miniaudio::AudioEngine &audio);
     void LoadSamuraiAttackSound(olc::ext::Miniaudio::AudioEngine &audio);
     void LoadShinobiAttackSound(olc::ext::Miniaudio::AudioEngine &audio);
+    void LoadMainMusic(olc::ext::Miniaudio::AudioEngine &audio);
     [[nodiscard]]
     std::shared_ptr<olc::Image> CreateImage(olc::PixelGameEngine &engine, const char *path) const;
     [[nodiscard]]

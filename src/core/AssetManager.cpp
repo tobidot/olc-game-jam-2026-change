@@ -90,6 +90,7 @@ void AssetManager::Load(olc::PixelGameEngine &engine, olc::ext::Miniaudio::Audio
     LoadKnightAttackSound(audio);
     LoadShinobiAttackSound(audio);
     LoadSamuraiAttackSound(audio);
+    LoadMainMusic(audio);
 }
 
 AnimationDefinition AssetManager::CreateSimpleAnimation(
@@ -148,6 +149,12 @@ void AssetManager::LoadShinobiAttackSound(olc::ext::Miniaudio::AudioEngine &audi
 {
     sfx_shinobi_attack = std::make_shared<olc::ext::Miniaudio::Sound>();
     audio.CreateSoundFromFile(*sfx_shinobi_attack, "assets/sfx/shinobi-attack.wav");
+}
+
+void AssetManager::LoadMainMusic(olc::ext::Miniaudio::AudioEngine &audio)
+{
+    music_main = std::make_shared<olc::ext::Miniaudio::Sound>();
+    audio.CreateSoundFromFile(*music_main, "assets/music/main.mp3");
 }
 
 void AssetManager::LoadKnight(olc::PixelGameEngine &engine)

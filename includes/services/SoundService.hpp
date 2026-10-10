@@ -18,6 +18,7 @@ public:
     virtual ~SoundService() = default;
 
 public:
+    void PlayMusic(olc::ext::Miniaudio::Sound &sound);
     void Play(olc::ext::Miniaudio::Sound &sound);
 };
 

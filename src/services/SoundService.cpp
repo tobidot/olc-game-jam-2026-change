@@ -12,7 +12,14 @@ SoundService::SoundService(const core::AssetManager *assets, const state::App *s
 {
 }
 
+void SoundService::PlayMusic(olc::ext::Miniaudio::Sound &sound)
+{
+    sound.SetVolume(state->settings.music_volume);
+    sound.Play();
+}
+
 void SoundService::Play(olc::ext::Miniaudio::Sound &sound)
 {
+    sound.SetVolume(state->settings.sfx_volume);
     sound.Play();
 }
