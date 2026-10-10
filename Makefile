@@ -7,6 +7,9 @@ UPLOAD_URL ?= http://localhost/api/v1/tobidot-elements
 
 .PHONY: web tce clean-tce upload
 
+linux: 
+	cmake --build build
+
 web:
 	@if [ ! -f build-web/CMakeCache.txt ]; then \
 		emcmake cmake -S . -B build-web; \

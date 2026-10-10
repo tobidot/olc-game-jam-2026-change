@@ -59,7 +59,11 @@
 
 #ifdef OLC_PGEX3_MINIAUDIO
 #define MINIAUDIO_IMPLEMENTATION
+#endif
 #include "miniaudio.h"
+
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
 #endif
 
 #include <cstring>
@@ -327,6 +331,44 @@ namespace olc::ext::Miniaudio
 #if defined(OLC_PGEX3_MINIAUDIO)
 #undef OLC_PGEX3_MINIAUDIO
 
+#ifdef __EMSCRIPTEN__
+// Browsers only allow an AudioContext to run after a user gesture. miniaudio itself only
+// unlocks on 'click' and 'touchend', so also unlock on key and pointer presses.
+// Additionally, unless background play is enabled, suspend audio while the page is hidden.
+EM_JS(void, olc_pgex3_miniaudio_web_setup, (const bool* pBackgroundPlay), {
+	if (!window.miniaudio) return;
+	var unlockEventTypes = ['keydown', 'mousedown', 'pointerdown', 'touchstart', 'touchend', 'click'];
+	var forEachContext = function(fn) {
+		window.miniaudio.devices.forEach(function(device) {
+			if (device != null && device.webaudio != null) fn(device.webaudio);
+		});
+	};
+	var unlock = function() {
+		var allRunning = true;
+		forEachContext(function(ctx) { if (ctx.state !== 'running') allRunning = false; });
+		if (allRunning) {
+			unlockEventTypes.forEach(function(type) { document.removeEventListener(type, unlock, true); });
+			return;
+		}
+		if (!document.hidden) window.miniaudio.unlock();
+	};
+	unlockEventTypes.forEach(function(type) { document.addEventListener(type, unlock, true); });
+
+	var suspendedContexts = [];
+	document.addEventListener('visibilitychange', function() {
+		if (document.hidden) {
+			if (HEAPU8[pBackgroundPlay]) return;
+			forEachContext(function(ctx) {
+				if (ctx.state === 'running') { suspendedContexts.push(ctx); ctx.suspend(); }
+			});
+		} else {
+			suspendedContexts.forEach(function(ctx) { ctx.resume(); });
+			suspendedContexts = [];
+		}
+	});
+});
+#endif
+
 namespace olc::ext::Miniaudio
 {
 
@@ -376,7 +418,7 @@ namespace olc::ext::Miniaudio
 
 		m_buffer.resize(bytes);
 		uint8_t* result = reinterpret_cast<uint8_t*>(std::memcpy(m_buffer.data(), data, m_buffer.size()));
-		if(result == m_buffer.data())
+		if(result != m_buffer.data())
 			return false;
 
 		m_pgex = pgex;
@@ -434,10 +476,15 @@ namespace olc::ext::Miniaudio
 			return false;
 		}
 
+		ma_uint32 flags = MA_SOUND_FLAG_DECODE;
+#ifdef __EMSCRIPTEN__
+		flags |= MA_SOUND_FLAG_ASYNC;
+#endif
+
 		result = ma_sound_init_from_file(
 			&m_pgex->GetEngine(),
 			m_virtual_path.c_str(),
-			MA_SOUND_FLAG_DECODE,
+			flags,
 			nullptr,
 			&fence,
 			&m_base_sound
@@ -445,17 +492,31 @@ namespace olc::ext::Miniaudio
 		
 		if(result != MA_SUCCESS)
 		{
+			std::cerr << "PGEX3_Miniaudio: failed to init base sound from virtual path: " << m_virtual_path << "\n";
 			ma_resource_manager_unregister_data(ma_engine_get_resource_manager(&m_pgex->GetEngine()), m_virtual_path.c_str());
 			return false;
 		}
+
+#ifdef __EMSCRIPTEN__
+		// Pump resource manager to start decoding
+		while (ma_resource_manager_process_next_job(ma_engine_get_resource_manager(&m_pgex->GetEngine())) == MA_SUCCESS);
+#endif
 		
 		m_voices.resize(m_num_voices);
 		for(int i = 0; i < m_num_voices; ++i)
 		{
-			result = ma_sound_init_copy(&m_pgex->GetEngine(), &m_base_sound, 0, nullptr, &m_voices[i]);
+			result = ma_sound_init_copy(&m_pgex->GetEngine(), &m_base_sound, flags, nullptr, &m_voices[i]);
 			if(result != MA_SUCCESS)
+			{
+				std::cerr << "PGEX3_Miniaudio: failed to init voice " << i << " for sound from virtual path: " << m_virtual_path << "\n";
 				break;
+			}
 		}
+
+#ifdef __EMSCRIPTEN__
+		// Pump resource manager again for voices
+		while (ma_resource_manager_process_next_job(ma_engine_get_resource_manager(&m_pgex->GetEngine())) == MA_SUCCESS);
+#endif
 		
 		// if the last result out of that loop isn't success, we failed
 		if(result != MA_SUCCESS)
@@ -468,7 +529,19 @@ namespace olc::ext::Miniaudio
 		}
 		
 		// wait here until the sound is fully loaded and dedoded
+#ifdef __EMSCRIPTEN__
+		while (fence.counter > 0)
+		{
+			if (ma_resource_manager_process_next_job(ma_engine_get_resource_manager(&m_pgex->GetEngine())) != MA_SUCCESS)
+			{
+				// No more jobs but fence not signaled? Should not happen for a single sound,
+				// but let's avoid infinite loop.
+				break;
+			}
+		}
+#else
 		ma_fence_wait(&fence);
+#endif
 		ma_fence_uninit(&fence);
 
 		ma_sound_get_length_in_pcm_frames(&m_base_sound, &m_length_in_pcm_frames);
@@ -782,8 +855,12 @@ namespace olc::ext::Miniaudio
         if(ma == nullptr)
             throw std::runtime_error{"unable to access miniaudio pgex instance from data_callback"};
 
+#ifndef __EMSCRIPTEN__
+        // on the web the canvas rarely holds DOM focus, background play is handled
+        // there by suspending the AudioContext while the page is hidden (see OnInstall)
         if(!ma->m_cfg.BackgroundPlay && !ma->m_pge->IsFocused())
 			return;
+#endif
 
 		// with great power comes...
 		if(ma->m_data_callback)
@@ -999,11 +1076,26 @@ namespace olc::ext::Miniaudio
         m_engine_config.pDevice = &m_device;
         m_engine_config.pResourceManager = &m_resource_manager;
     
-        if(ma_engine_init(&m_engine_config, &m_engine) != MA_SUCCESS)
+		if(ma_engine_init(&m_engine_config, &m_engine) != MA_SUCCESS)
 		{
 			std::cerr << "PGEX3_Miniaudio: failed to initialize engine\n";
 			return false;
 		}
+
+		if (ma_device_start(&m_device) != MA_SUCCESS)
+		{
+			std::cerr << "PGEX3_Miniaudio: failed to start device\n";
+			// don't fail here, on the web the device may only become available after a user gesture
+		}
+
+#ifdef __EMSCRIPTEN__
+		// Kickstart resource manager
+		while(ma_resource_manager_process_next_job(&m_resource_manager) == MA_SUCCESS);
+
+		// see olc_pgex3_miniaudio_web_setup
+		olc_pgex3_miniaudio_web_setup(&m_cfg.BackgroundPlay);
+#endif
+
 		m_is_initialized = true;
 		return true;
 	}
@@ -1021,7 +1113,7 @@ namespace olc::ext::Miniaudio
 	bool AudioEngine::OnBeforeSystemUpdate([[maybe_unused]] olc::PixelGameEngine* pge, [[maybe_unused]] float fElapsedTime)
 	{
         #if OLC_HOST == OLC_HOST_EMSCRIPTEN
-        ma_resource_manager_process_next_job(&m_resource_manager);
+        while(ma_resource_manager_process_next_job(&m_resource_manager) == MA_SUCCESS);
         #endif
 
 		return true;

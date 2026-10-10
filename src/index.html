@@ -26,31 +26,6 @@
                 return document.getElementById('canvas');
             })()
         };
-
-        // function unlockAudio() {
-        //     console.log('resume');
-        //     // Check if miniaudio's WebAudio context exists and is suspended
-        //     window.miniaudio.devices[0].webaudio.resume();
-
-        //     // Remove event listeners once unlocked
-        //     window.removeEventListener('click', unlockAudio);
-        //     window.removeEventListener('keydown', unlockAudio);
-        //     window.removeEventListener('touchend', unlockAudio);
-        // }
-
-        // window.addEventListener('click', unlockAudio);
-        // window.addEventListener('keydown', unlockAudio);
-        // window.addEventListener('touchend', unlockAudio);
-
-        function unlockAudio() {
-            if (window.miniaudio && typeof window.miniaudio.unlock === 'function') {
-                window.miniaudio.unlock();
-            }
-        }
-
-        window.addEventListener('click', unlockAudio, { once: true });
-        window.addEventListener('touchstart', unlockAudio, { once: true });
-        window.addEventListener('keydown', unlockAudio, { once: true });
     </script>
     {{{ SCRIPT }}}
 </body>

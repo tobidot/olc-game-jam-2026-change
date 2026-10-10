@@ -17030,7 +17030,9 @@ void main()
 			// May also be governed by OS / driver settings
 			// and desktop compositor settings
 #if OLC_HOST == OLC_HOST_EMSCRIPTEN || OLC_HOST == OLC_HOST_LINUX_WAYLAND
+#if OLC_HOST != OLC_HOST_EMSCRIPTEN
 			eglSwapInterval(glRenderContext.display, 1);
+#endif
 #elif OLC_HOST == OLC_HOST_LINUX_X11
 			gl.XSwapIntervalEXT(display, window_handle, 1);
 #else
@@ -17042,7 +17044,9 @@ void main()
 		{
 			// Disable VSync - run like the clappers!
 #if OLC_HOST == OLC_HOST_EMSCRIPTEN || OLC_HOST == OLC_HOST_LINUX_WAYLAND
+#if OLC_HOST != OLC_HOST_EMSCRIPTEN
 			eglSwapInterval(glRenderContext.display, 0);
+#endif
 #elif OLC_HOST == OLC_HOST_LINUX_X11
 			gl.XSwapIntervalEXT(display, window_handle, 0);
 #else

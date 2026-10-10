@@ -14,12 +14,14 @@ SoundService::SoundService(const core::AssetManager *assets, const state::App *s
 
 void SoundService::PlayMusic(olc::ext::Miniaudio::Sound &sound)
 {
+    std::cout << "SoundService: PlayMusic\n";
     sound.SetVolume(state->settings.music_volume);
-    sound.Play();
+    sound.Play(true);
 }
 
 void SoundService::Play(olc::ext::Miniaudio::Sound &sound)
 {
+    std::cout << "SoundService: Play SFX\n";
     sound.SetVolume(state->settings.sfx_volume);
     sound.Play();
 }
